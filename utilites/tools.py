@@ -13,6 +13,7 @@ __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 
 import os
+import json
 
 
 def createAppRequiredDirectories(
@@ -38,6 +39,36 @@ def createAppRequiredDirectories(
     except Exception as e:
         print("Unable to create directories problems/language1,2.. Error Code: 3101")
         print("Exception:", e)
+
+
+def __loadJSONFile(filePath: str = "settings.json") -> dict | list:
+    """
+    Description:
+        - Function to load JSON file specified in the parameter.
+        - The function reads the JSON data and returns it as a dictionary or list (as per JSON).
+
+    Args:
+        * filePath (str, optional):
+            - Path to the desired JSON file.
+            - Defaults to "settings.json".
+
+    Returns:
+        * dict:
+            - Return a dictionary or list containing JSON data on success else an empty dictionary.
+                - Dictionary if JSON will like {...}
+                - List if JSON will like [...]
+                - Empty dictionary if JSON file is not found or any error or exception occurs.
+    """
+    try:
+        with open(filePath, "r") as jsonFile:
+            jsonData: dict = json.load(jsonFile)
+    except Exception as e:
+        print(f"Unable to open the file {filePath}. Error Code: 3102")
+        print("Exception:", e)
+        return {}
+    else:
+        print(f"{filePath} file loaded successfully...")
+        return jsonData
 
 
 if __name__ == "__main__":
