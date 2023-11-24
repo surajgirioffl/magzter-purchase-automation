@@ -1,5 +1,5 @@
 """
-    @file: app_scripts/tools.py
+    @file: utilities/tools.py
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
