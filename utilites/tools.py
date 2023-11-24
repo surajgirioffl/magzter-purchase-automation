@@ -37,7 +37,7 @@ def createAppRequiredDirectories(
         for directory in directoriesWithPath:
             os.makedirs(directory, exist_ok=True)
     except Exception as e:
-        print("Unable to create directories problems/language1,2.. Error Code: 3101")
+        print(f"Unable to create the directory '{directory}'. Error Code: 3101")
         print("Exception:", e)
 
 
