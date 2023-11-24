@@ -89,5 +89,23 @@ def loadAppSettings(settingsFilePath: str = "settings.json") -> dict:
     return __loadJSONFile(settingsFilePath)
 
 
+def loadAppSecrets(secretFilePath: str = "secrets.json") -> dict:
+    """
+    Description:
+        - Function to load application secrets stored in a 'secrets.json' file.
+        - The function reads the JSON data and returns it as a dictionary
+
+    Args:
+        * settingsFilePath (str, optional):
+            - Path to the secrets.json file (Name may be different)
+            - Defaults to "secrets.json".
+
+    Returns:
+        * dict:
+            - Return a dictionary containing application secrets on success else an empty dictionary.
+    """
+    return __loadJSONFile(secretFilePath)
+
+
 if __name__ == "__main__":
     createAppRequiredDirectories()
