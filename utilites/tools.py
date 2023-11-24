@@ -71,5 +71,23 @@ def __loadJSONFile(filePath: str = "settings.json") -> dict | list:
         return jsonData
 
 
+def loadAppSettings(settingsFilePath: str = "settings.json") -> dict:
+    """
+    Description:
+        - Function to load application settings and configurations stored in a 'settings.json' file.
+        - The function reads the JSON data and returns it as a dictionary
+
+    Args:
+        * settingsFilePath (str, optional):
+            - Path to the settings.json file (Name may be different)
+            - Defaults to "settings.json".
+
+    Returns:
+        * dict:
+            - Return a dictionary containing settings configuration on success else an empty dictionary.
+    """
+    return __loadJSONFile(settingsFilePath)
+
+
 if __name__ == "__main__":
     createAppRequiredDirectories()
