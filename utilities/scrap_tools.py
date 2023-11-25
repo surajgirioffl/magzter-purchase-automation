@@ -59,6 +59,48 @@ def waitUntilElementLoadedInDOM(
     return element
 
 
+def waitUntilElementBecomeVisible(
+    chromeInstance: Chrome, elementLocator: tuple, maxWaitTime: int = 10
+) -> WebElement:
+    """
+    Description:
+        - Function to wait until an element is visible in a Chrome instance.
+
+    Expectation:
+        * visibility_of_element_located
+            - An expectation for checking that an element is present on the DOM of a page and visible.
+            - Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+
+    Args:
+        * chromeInstance (Chrome):
+            - The Chrome instance to wait on.
+        * elementLocator (tuple):
+            - The locator of the element to wait for.
+                - Used to find the element returns the WebElement once it is located and visible
+            - E.g: (By.ID, "myElementId")
+            - It must be a tuple.
+        * maxWaitTime (int, optional):
+            - The maximum time to wait for the element to be visible, in seconds.
+            - Defaults to 10.
+
+    Returns:
+        * WebElement:
+            - The visible element specified via the elementLocator.
+
+    Raises:
+        * selenium.common.exceptions.TimeoutException
+            - If the element is not loaded within the specified time.
+        * selenium.common.exceptions.NoSuchElementException
+            - If the element is not found.
+    """
+    # Set a maximum wait time (in seconds)
+    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    element: WebElement = wait.until(
+        expected_conditions.visibility_of_element_located(elementLocator)
+    )
+    return element
+
+
 def openNewTab(chromeInstance: Chrome) -> None:
     """
     Description:
