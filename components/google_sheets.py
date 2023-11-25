@@ -139,3 +139,19 @@ class GoogleSheets:
             return False
         else:
             return True
+
+    def getRowValues(self, rowIndex: int) -> list:
+        """
+        Description:
+            - Method to retrieves the values of a specific row in the worksheet.
+
+        Args:
+            * rowIndex (int):
+                - The index of the row to retrieve values from.
+
+        Returns:
+            * list: 
+                - A list containing the values of the specified row.
+                - Return empty list([]) if the row does not exist.
+        """
+        return self.worksheet.row_values(rowIndex)
