@@ -1,0 +1,1 @@
+# magzter-purchase-automation
