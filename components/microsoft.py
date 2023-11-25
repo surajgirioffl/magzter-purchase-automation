@@ -14,3 +14,10 @@ __email__ = "surajgirioffl@gmail.com"
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
+
+
+class Microsoft:
+    """
+    Description:
+        - Class to perform operations related to Microsoft for the project.
+    """
