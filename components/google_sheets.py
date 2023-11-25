@@ -12,7 +12,7 @@
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 
-from typing import Literal
+from typing import Literal, Any
 from sys import exit
 import gspread
 from gspread.utils import ExportFormat
@@ -206,10 +206,10 @@ class GoogleSheets:
             * None: This function does not return anything.
         """
         # Below is list of dict because batch_update() accepts a list of dictionaries
-        listOfDict: list[dict[str]] = []
+        listOfDict: list[dict[str, Any]] = []
 
         # Appending desired dictionary in the above list.
-        for cell, value in cellValueDict.values():
+        for cell, value in cellValueDict.items():
             listOfDict.append({"range": cell, "values": [[value]]})
 
         # Updating
@@ -222,5 +222,5 @@ if __name__ == "__main__":
     print(gs.getRowValues(2))  # Return empty list if no values else list of value
     print(gs.getCellValue("D1"))  # Return None value if no values else value in string
 
-    gs.updateMultipleCells()
+    gs.updateMultipleCells({"B2": "Shiv", "C2": "1"})
     print(gs.getRowValues(2))  # Return empty list if no values else list of value
