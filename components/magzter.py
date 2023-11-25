@@ -15,7 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from utilities.scrap_tools import waitUntilElementLoaded
+from utilities.scrap_tools import waitUntilElementLoadedInDOM
 
 
 class Magzter:
@@ -62,10 +62,10 @@ class Magzter:
         self.chrome.get(url)
 
         # self.chrome.find_element(By.TAG_NAME, "button").click()
-        button: WebElement = waitUntilElementLoaded(self.chrome, (By.TAG_NAME, "button"))
+        button: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.TAG_NAME, "button"))
         button.click()
 
         # Page switched
-        emailInputElement: WebElement = waitUntilElementLoaded(self.chrome, (By.NAME, "word"))
+        emailInputElement: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.NAME, "word"))
         emailInputElement.send_keys(email)
         self.chrome.find_element(By.CLASS_NAME, "login__loginBtnnp").click()

@@ -15,7 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from utilities.scrap_tools import waitUntilElementLoaded
+from utilities.scrap_tools import waitUntilElementLoadedInDOM
 
 
 class Microsoft:
@@ -64,12 +64,12 @@ class Microsoft:
         self.chrome.get(url)
 
         # self.chrome.find_element(By.ID, "i0116").send_keys(email)
-        emailInputElement: WebElement = waitUntilElementLoaded(self.chrome, (By.ID, "i0116"))
+        emailInputElement: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.ID, "i0116"))
         emailInputElement.send_keys(email)
         self.chrome.find_element(By.ID, "idSIButton9").click()
 
         # Page switched
         # self.chrome.find_element(By.ID, "i0118").send_keys(password)
-        passwordInputElement: WebElement = waitUntilElementLoaded(self.chrome, (By.ID, "i0118"))
+        passwordInputElement: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.ID, "i0118"))
         passwordInputElement.send_keys(password)
         self.chrome.find_element(By.ID, "idSIButton9").click()
