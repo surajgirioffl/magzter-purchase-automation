@@ -17,7 +17,7 @@ import json
 
 
 def createAppRequiredDirectories(
-    directoriesWithPath: list | tuple | set = {"appdata"},
+    directoriesWithPath: list | tuple | set = {"appdata", "backups"},
 ) -> None:
     """
     Description:
@@ -29,7 +29,7 @@ def createAppRequiredDirectories(
                     - You can specify multiple directories along with paths.
                     - If no path provided then it will taken as current working directory (root directory of the project/application)
                     - You can also provided hierarchical directories path, all directories of the hierarchy will be created.
-                - Defaults to {"appdata"}.
+                - Defaults to {"appdata", "backups"}.
     Returns:
         * None
     """
@@ -71,9 +71,7 @@ def loadJSONFile(filePath: str = "settings.json") -> dict | list:
         return jsonData
 
 
-def saveDictAsJSON(
-    dictData: dict, fileNameOrPathWithExtension: str, mode="w", indent=2
-) -> bool:
+def saveDictAsJSON(dictData: dict, fileNameOrPathWithExtension: str, mode="w", indent=2) -> bool:
     """
     Description:
         - Function to Save a dictionary as JSON.
