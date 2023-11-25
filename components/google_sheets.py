@@ -172,3 +172,22 @@ class GoogleSheets:
                 - The value of the cell, or None if the cell is empty.
         """
         return self.worksheet.acell(cell).value
+
+    def updateSingleCell(self, cell: str, value: str) -> None:
+        """
+        Description:
+            - Method to update the value of a single cell in the worksheet.
+
+        Args:
+            * cell (str):
+                - The cell to be updated.
+                - The address of the cell whose value is to be update.
+                - Must be in A1 notation (https://developers.google.com/sheets/api/guides/concepts#a1_notation)
+                    - E.g: "A1", "C5" etc.
+            * value (str):
+                - The new value for the cell.
+
+        Returns:
+            * None
+        """
+        self.worksheet.update_acell(cell, value)
