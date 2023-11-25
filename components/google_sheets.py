@@ -191,3 +191,36 @@ class GoogleSheets:
             * None
         """
         self.worksheet.update_acell(cell, value)
+
+    def updateMultipleCells(self, cellValueDict: dict) -> None:
+        """
+        Description:
+            - Method to updates multiple cells at once in the worksheet with the provided values.
+
+        Args:
+            * cellValueDict (dict):
+                - A dictionary mapping cell addresses to their corresponding values.
+                - Example: {"A1": "value1", "B2": "value2", "E5": "value3"}
+
+        Returns:
+            * None: This function does not return anything.
+        """
+        # Below is list of dict because batch_update() accepts a list of dictionaries
+        listOfDict: list[dict[str]] = []
+
+        # Appending desired dictionary in the above list.
+        for cell, value in cellValueDict.values():
+            listOfDict.append({"range": cell, "values": [[value]]})
+
+        # Updating
+        self.worksheet.batch_update(listOfDict)
+
+
+if __name__ == "__main__":
+    gs = GoogleSheets("testing")
+    # gs.exportSpreadsheet("suraj.csv", "CSV")
+    print(gs.getRowValues(2))  # Return empty list if no values else list of value
+    print(gs.getCellValue("D1"))  # Return None value if no values else value in string
+
+    gs.updateMultipleCells()
+    print(gs.getRowValues(2))  # Return empty list if no values else list of value
