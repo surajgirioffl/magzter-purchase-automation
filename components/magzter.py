@@ -14,6 +14,7 @@ __email__ = "surajgirioffl@gmail.com"
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 
 
 class Magzter:
@@ -21,3 +22,23 @@ class Magzter:
     Description:
         - Class to perform operations related to Magzter for the project.
     """
+
+    def __init__(self, chromeInstance: Chrome) -> None:
+        """
+        Description:
+            - Initializes a new instance of the class.
+
+        Args:
+            * chromeInstance (Chrome):
+                - An instance of the Chrome (selenium.webdriver.Chrome).
+
+        Returns:
+            * None
+        """
+        self.chrome = chromeInstance
+
+    def __del__(self):
+        """
+        Description:
+            - Destructor method for the class.
+        """
