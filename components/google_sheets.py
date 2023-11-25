@@ -11,3 +11,14 @@
 
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
+
+from typing import Literal
+import gspread
+from gspread.utils import ExportFormat
+
+
+class GoogleSheets:
+    """
+    Description:
+        - Class to perform any operation related to the Google Sheets required for the project.
+    """
