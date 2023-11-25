@@ -107,5 +107,25 @@ def loadAppSecrets(secretFilePath: str = "secrets.json") -> dict:
     return loadJSONFile(secretFilePath)
 
 
+def loadLastSuccessStatistics(
+    statisticsFilePath: str = "appdata/last_success_statistics.json",
+) -> dict:
+    """
+    Description:
+        - Function to load last successful operation statistics stored in a 'appdata/last_success_statistics.json' file.
+        - The function reads the JSON data and returns it as a dictionary
+
+    Args:
+        * settingsFilePath (str, optional):
+            - Path to the last_success_statistics.json file (Name may be different)
+            - Defaults to "appdata/last_success_statistics.json".
+
+    Returns:
+        * dict:
+            - Return a dictionary containing last successful operation statistics on success else an empty dictionary.
+    """
+    return loadJSONFile(statisticsFilePath)
+
+
 if __name__ == "__main__":
     createAppRequiredDirectories()
