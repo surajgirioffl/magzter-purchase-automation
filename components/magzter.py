@@ -15,6 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from utilities.scrap_tools import waitUntilElementLoaded
 
 
 class Magzter:
@@ -42,3 +43,29 @@ class Magzter:
         Description:
             - Destructor method for the class.
         """
+
+    def login(self, url: str, email: str) -> None:
+        """
+        Description:
+            * Method to logs in to Magzter website using the provided URL and email.
+
+        Args:
+            * url (str):
+                - The URL of the login page to log in to.
+            * email (str):
+                - The email address to use for logging in.
+
+        Returns:
+            * None
+        """
+        # Loading new page
+        self.chrome.get(url)
+
+        # self.chrome.find_element(By.TAG_NAME, "button").click()
+        button: WebElement = waitUntilElementLoaded(self.chrome, (By.TAG_NAME, "button"))
+        button.click()
+
+        # Page switched
+        emailInputElement: WebElement = waitUntilElementLoaded(self.chrome, (By.NAME, "word"))
+        emailInputElement.send_keys(email)
+        self.chrome.find_element(By.CLASS_NAME, "login__loginBtnnp").click()
