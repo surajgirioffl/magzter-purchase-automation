@@ -66,3 +66,22 @@ def openNewTab(chromeInstance: Chrome) -> None:
         * None
     """
     chromeInstance.execute_script("window.open('','_blank');")
+
+
+def switchTab(chromeInstance: Chrome, tabIndex: int) -> None:
+    """
+    Description:
+        - Function to switch the active tab of a Chrome instance to the tab at the specified index.
+
+    Parameters:
+        * chromeInstance (Chrome):
+            - The Chrome instance.
+        * tabIndex (int):
+            - The index of the tab to switch to.
+            - Index always starts from 0.
+                - E.g: 1st tab has index 0, 2nd tab has index 1, and so on.
+
+    Returns:
+        None
+    """
+    chromeInstance._switch_to.window(chromeInstance.window_handles[tabIndex])
