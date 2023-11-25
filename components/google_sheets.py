@@ -103,3 +103,39 @@ class GoogleSheets:
         Description:
             - Destructor method for the class.
         """
+
+    def exportSpreadsheet(
+        self,
+        filenameOrPathWithExtension: str,
+        exportFormat: Literal[
+            "PDF", "EXCEL", "CSV", "OPEN_OFFICE_SHEET", "TSV", "ZIPPED_HTML"
+        ] = "EXCEL",
+    ) -> bool:
+        """
+        Description:
+            - Function to exports the spreadsheet to the specified file in the given format.
+
+        Args:
+            * filenameOrPathWithExtension (str):
+                - The name or path of the file to export the spreadsheet to, including the file extension.
+            * exportFormat (Literal["PDF", "EXCEL", "CSV", "OPEN_OFFICE_SHEET", "TSV", "ZIPPED_HTML"], optional):
+                - The format in which to export the spreadsheet.
+                - The format may be any one from the following list: "PDF", "EXCEL", "CSV", "OPEN_OFFICE_SHEET", "TSV", "ZIPPED_HTML".
+                - Defaults to "EXCEL".
+
+        Returns:
+            * bool:
+                - True if the export was successful, False otherwise.
+        """
+        contents: bytes = self.spreadsheet.export(getattr(ExportFormat, exportFormat))
+        try:
+            with open(filenameOrPathWithExtension, "wb") as file:
+                file.write(contents)
+        except Exception as e:
+            print(
+                "Something went wrong while exporting the spreadsheet. Error Code: 2204"
+            )
+            print("Exception:", e)
+            return False
+        else:
+            return True
