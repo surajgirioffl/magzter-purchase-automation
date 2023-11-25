@@ -97,3 +97,9 @@ class GoogleSheets:
             print("Something went wrong while fetching the worksheet. Error Code: 2203")
             print("Exception:", e)
             exit(-1) if exitOnError else None
+
+    def __del__(self):
+        """
+        Description:
+            - Destructor method for the class.
+        """
