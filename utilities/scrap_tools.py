@@ -10,3 +10,44 @@
 """
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
+
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver import Chrome
+
+
+def waitUntilElementLoaded(
+    chromeInstance: Chrome, elementLocator: tuple, maxWaitTime: int = 10
+) -> WebElement:
+    """
+    Description:
+        - Function to wait until an element is loaded in a Chrome instance.
+
+    Args:
+        * chromeInstance (Chrome):
+            - The Chrome instance to wait on.
+        * elementLocator (tuple):
+            - The locator of the element to wait for.
+            - E.g: (By.ID, "myElementId")
+            - It must be a tuple.
+        * maxWaitTime (int, optional):
+            - The maximum time to wait for the element to be loaded, in seconds.
+            - Defaults to 10.
+
+    Returns:
+        * WebElement:
+            - The loaded element.
+
+    Raises:
+        * selenium.common.exceptions.TimeoutException
+            - If the element is not loaded within the specified time.
+        * selenium.common.exceptions.NoSuchElementException
+            - If the element is not found.
+    """
+    # Set a maximum wait time (in seconds)
+    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    element: WebElement = wait.until(
+        expected_conditions.presence_of_element_located(elementLocator)
+    )
+    return element
