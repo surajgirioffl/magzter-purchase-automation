@@ -14,6 +14,8 @@ __email__ = "surajgirioffl@gmail.com"
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
+from utilities.scrap_tools import waitUntilElementLoaded
 
 
 class Microsoft:
@@ -41,3 +43,33 @@ class Microsoft:
         Description:
             - Destructor method for the class.
         """
+
+    def login(self, url: str, email: str, password: str) -> None:
+        """
+        Description:
+            * Method to logs in to Microsoft website using the provided URL, email, and password.
+
+        Args:
+            * url (str):
+                - The URL of the login page to log in to.
+            * email (str):
+                - The email address to use for logging in.
+            * password (str):
+                - The password to use for logging in.
+
+        Returns:
+            * None
+        """
+        # Loading new page
+        self.chrome.get(url)
+
+        # self.chrome.find_element(By.ID, "i0116").send_keys(email)
+        emailInputElement: WebElement = waitUntilElementLoaded(self.chrome, (By.ID, "i0116"))
+        emailInputElement.send_keys(email)
+        self.chrome.find_element(By.ID, "idSIButton9").click()
+
+        # Page switched
+        # self.chrome.find_element(By.ID, "i0118").send_keys(password)
+        passwordInputElement: WebElement = waitUntilElementLoaded(self.chrome, (By.ID, "i0118"))
+        passwordInputElement.send_keys(password)
+        self.chrome.find_element(By.ID, "idSIButton9").click()
