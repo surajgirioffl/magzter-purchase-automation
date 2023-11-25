@@ -17,18 +17,24 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver import Chrome
 
 
-def waitUntilElementLoaded(
+def waitUntilElementLoadedInDOM(
     chromeInstance: Chrome, elementLocator: tuple, maxWaitTime: int = 10
 ) -> WebElement:
     """
     Description:
         - Function to wait until an element is loaded in a Chrome instance.
 
+    Expectation:
+        * presence_of_element_located
+            - An expectation for checking that an element is present on the DOM of a page.
+            - This does not necessarily mean that the element is visible.
+
     Args:
         * chromeInstance (Chrome):
             - The Chrome instance to wait on.
         * elementLocator (tuple):
             - The locator of the element to wait for.
+                - Used to find the element returns the WebElement once it is located
             - E.g: (By.ID, "myElementId")
             - It must be a tuple.
         * maxWaitTime (int, optional):
@@ -37,7 +43,7 @@ def waitUntilElementLoaded(
 
     Returns:
         * WebElement:
-            - The loaded element.
+            - The loaded element specified via the elementLocator.
 
     Raises:
         * selenium.common.exceptions.TimeoutException
