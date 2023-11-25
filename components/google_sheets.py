@@ -150,8 +150,25 @@ class GoogleSheets:
                 - The index of the row to retrieve values from.
 
         Returns:
-            * list: 
+            * list:
                 - A list containing the values of the specified row.
                 - Return empty list([]) if the row does not exist.
         """
         return self.worksheet.row_values(rowIndex)
+
+    def getCellValue(self, cell: str) -> str | None:
+        """
+        Description:
+            - Method to retrieves the value of a specific cell.
+
+        Args:
+            * cell (str):
+                - The address of the cell to retrieve the value from.
+                - Must be in A1 notation (https://developers.google.com/sheets/api/guides/concepts#a1_notation)
+                    - E.g: "A1", "C5" etc.
+
+        Returns:
+            * str | None:
+                - The value of the cell, or None if the cell is empty.
+        """
+        return self.worksheet.acell(cell).value
