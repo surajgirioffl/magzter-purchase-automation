@@ -71,6 +71,41 @@ def loadJSONFile(filePath: str = "settings.json") -> dict | list:
         return jsonData
 
 
+def saveDictAsJSON(
+    dictData: dict, fileNameOrPathWithExtension: str, mode="w", indent=2
+) -> bool:
+    """
+    Description:
+        - Function to Save a dictionary as JSON.
+
+    Parameters:
+        * dictData (dict):
+            - The dictionary to be saved as JSON.
+        * fileNameOrPathWithExtension (str):
+            - The name or path of the file where the JSON will be saved (with 'json' extension)
+        * mode (str, optional):
+            - The file mode to open the file in.
+            - Defaults to "w".
+        * indent (int, optional):
+            - The number of spaces to use for indentation in the JSON.
+            - Defaults to 2.
+
+    Returns:
+        * bool:
+            - True if the dictionary was successfully saved as JSON, False otherwise.
+    """
+    try:
+        jsonData = json.dumps(dictData, indent=indent)
+        with open(fileNameOrPathWithExtension, mode) as jsonFile:
+            jsonFile.write(jsonData)
+    except Exception as e:
+        print("Unable to save dictionary as JSON. Error Code: 3103")
+        print("Exception:", e)
+        return False
+    else:
+        return True
+
+
 def loadAppSettings(settingsFilePath: str = "settings.json") -> dict:
     """
     Description:
@@ -129,3 +164,4 @@ def loadLastSuccessStatistics(
 
 if __name__ == "__main__":
     createAppRequiredDirectories()
+    saveDictAsJSON({"key": None}, "test.json")
