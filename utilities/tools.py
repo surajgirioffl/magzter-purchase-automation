@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 24th Nov 2023
+    @last-modified: 25th Nov 2023
     @error-series: 3100
     @description:
         * Module to perform any extra operations required for the project.
@@ -41,7 +41,7 @@ def createAppRequiredDirectories(
         print("Exception:", e)
 
 
-def __loadJSONFile(filePath: str = "settings.json") -> dict | list:
+def loadJSONFile(filePath: str = "settings.json") -> dict | list:
     """
     Description:
         - Function to load JSON file specified in the parameter.
@@ -86,7 +86,7 @@ def loadAppSettings(settingsFilePath: str = "settings.json") -> dict:
         * dict:
             - Return a dictionary containing settings configuration on success else an empty dictionary.
     """
-    return __loadJSONFile(settingsFilePath)
+    return loadJSONFile(settingsFilePath)
 
 
 def loadAppSecrets(secretFilePath: str = "secrets.json") -> dict:
@@ -104,7 +104,7 @@ def loadAppSecrets(secretFilePath: str = "secrets.json") -> dict:
         * dict:
             - Return a dictionary containing application secrets on success else an empty dictionary.
     """
-    return __loadJSONFile(secretFilePath)
+    return loadJSONFile(secretFilePath)
 
 
 if __name__ == "__main__":
