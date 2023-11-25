@@ -11,3 +11,13 @@
 
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
+
+from selenium.webdriver import Chrome
+from selenium.webdriver.common.by import By
+
+
+class Magzter:
+    """
+    Description:
+        - Class to perform operations related to Magzter for the project.
+    """
