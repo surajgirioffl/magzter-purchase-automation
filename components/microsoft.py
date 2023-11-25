@@ -15,7 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from utilities.scrap_tools import waitUntilElementLoadedInDOM
+from utilities import scrap_tools
 
 
 class Microsoft:
@@ -63,13 +63,19 @@ class Microsoft:
         # Loading new page
         self.chrome.get(url)
 
+        # Input of email
         # self.chrome.find_element(By.ID, "i0116").send_keys(email)
-        emailInputElement: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.ID, "i0116"))
+        emailInputElement: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
+            self.chrome, (By.ID, "i0116")
+        )
         emailInputElement.send_keys(email)
-        self.chrome.find_element(By.ID, "idSIButton9").click()
+        self.chrome.find_element(By.ID, "idSIButton9").click()  # Clicking on next
 
-        # Page switched
+        # DOM is same and elements are present but focus page content changed. So, no need to use wait-until-load concept because already loaded.
+        # Input of password
         # self.chrome.find_element(By.ID, "i0118").send_keys(password)
-        passwordInputElement: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.ID, "i0118"))
+        passwordInputElement: WebElement = scrap_tools.waitUntilElementBecomeVisible(
+            self.chrome, (By.ID, "i0118")
+        )
         passwordInputElement.send_keys(password)
-        self.chrome.find_element(By.ID, "idSIButton9").click()
+        self.chrome.find_element(By.ID, "idSIButton9").click()  # clicking on next

@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 25th Nov 2023
+    @last-modified: 26th Nov 2023
     @error-series: 2400
     @description:
         * Module to perform any operations related to magzter for the project.
@@ -15,7 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from utilities.scrap_tools import waitUntilElementLoadedInDOM
+from utilities import scrap_tools
 
 
 class Magzter:
@@ -61,11 +61,17 @@ class Magzter:
         # Loading new page
         self.chrome.get(url)
 
+        # 'Claim Now' button
         # self.chrome.find_element(By.TAG_NAME, "button").click()
-        button: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.TAG_NAME, "button"))
+        button: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
+            self.chrome, (By.TAG_NAME, "button")
+        )
         button.click()
 
-        # Page switched
-        emailInputElement: WebElement = waitUntilElementLoadedInDOM(self.chrome, (By.NAME, "word"))
+        # DOM is same and elements are present but focus page content changed. So, no need to use wait-until-load concept because already loaded.
+        # Email input
+        emailInputElement: WebElement = scrap_tools.waitUntilElementBecomeVisible(
+            self.chrome, (By.NAME, "word")
+        )
         emailInputElement.send_keys(email)
         self.chrome.find_element(By.CLASS_NAME, "login__loginBtnnp").click()
