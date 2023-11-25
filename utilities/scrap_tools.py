@@ -51,3 +51,18 @@ def waitUntilElementLoaded(
         expected_conditions.presence_of_element_located(elementLocator)
     )
     return element
+
+
+def openNewTab(chromeInstance: Chrome) -> None:
+    """
+    Description:
+        - Function to open a new tab in the specified Chrome instance.
+
+    Args:
+        * chromeInstance (Chrome):
+            - The Chrome instance to open the new tab in.
+
+    Returns:
+        * None
+    """
+    chromeInstance.execute_script("window.open('','_blank');")
