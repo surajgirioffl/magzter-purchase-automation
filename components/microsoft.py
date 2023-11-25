@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 25th Nov 2023
+    @last-modified: 26th Nov 2023
     @error-series: 2300
     @description:
         * Module to perform any operations related to Microsoft for the project.
@@ -79,3 +79,33 @@ class Microsoft:
         )
         passwordInputElement.send_keys(password)
         self.chrome.find_element(By.ID, "idSIButton9").click()  # clicking on next
+
+    def openOutlook(self, url: str = "https://outlook.live.com/mail/0/") -> None:
+        """
+        Description:
+            - Method to open the Outlook(mail) page in the chrome instance.
+            - Must be called after login using Microsoft.login() method otherwise exception will be thrown.
+
+        Args:
+            * url (str):
+                - The URL of the Outlook page to open.
+                - Defaults to "https://outlook.live.com/mail/0/".
+
+        Returns:
+            * None
+        """
+        self.chrome.get(url)
+
+        # A microsoft page open, having option to sign-in (We have already signed-in using login method. So, session is already there).
+        # We just need to click on 'Sign in'
+
+        # It opens a new tab for outlook because of target = _blank. We have update it using Javascript.
+        # self.chrome.find_element(By.CSS_SELECTOR, 'a[data-bi-cn="SignIn"]')
+        signInButton: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
+            self.chrome, (By.CSS_SELECTOR, 'a[data-bi-cn="SignIn"]')
+        )
+        # Changing target attribute value to '' using javascript. So, that outlook will open in same tab.
+        self.chrome.execute_script(
+            """document.querySelector('a[data-bi-cn="SignIn"]').target='';"""
+        )
+        signInButton.click()
