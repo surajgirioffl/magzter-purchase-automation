@@ -229,6 +229,37 @@ def waitUntilCurrentURLMatchToExpectedURLRegexPattern(
     return wait.until(expected_conditions.url_matches(expectedURLRegexPattern))
 
 
+def waitUntilCurrentURLDifferentFromExpectedURL(
+    chromeInstance: Chrome, expectedURL: str, maxWaitTime: int = 5
+) -> bool:
+    """
+    Description:
+        - Function to waits until the current URL is different from the expected URL.
+        - Means wait until URL changes to that URL which is different from the expected URL.
+        - Means wait.util() will continuously call url_changes() function until the current URL is different from the expected URL.
+            - Means if current URL is same as given expected URL then wait.until() will continuously call url_changes() function until the current URL is different from the expected URL (In the given Time).
+
+    Expectation:
+        - An expectation for checking the current url.
+
+    Args:
+        * chromeInstance (Chrome):
+            - The instance of the Chrome browser.
+        * expectedURL (str):
+            - The expected URL.
+        * maxWaitTime (int, optional):
+            - The maximum wait time in seconds.
+            - Defaults to 5.
+
+    Returns:
+        * bool:
+            - True if the current URL is different from the expected URL within the maximum wait time, False otherwise.
+    """
+    # Set a maximum wait time (in seconds)
+    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    return wait.until(expected_conditions.url_changes(expectedURL))
+
+
 def openNewTab(chromeInstance: Chrome) -> None:
     """
     Description:
