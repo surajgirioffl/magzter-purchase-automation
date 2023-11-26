@@ -125,3 +125,44 @@ class Magzter:
         ).click()
 
         return True
+
+    def writeCardInformation(
+        self, cardNumber: str, cardExpiry: str, cvc: str, cardholderName: str
+    ) -> None:
+        """
+        Description:
+            - Method to writes the card information to the corresponding input boxes on the checkout page of Magzter and proceed.
+                - Checkout page's URL is like https://checkout.stripe.com/c/pay/....
+
+        Args:
+            * cardNumber (str):
+                - The card number to be entered.
+            * cardExpiry (str):
+                - The card expiry date to be entered.
+            * cvc (str):
+                - The cvc number to be entered.
+            * cardholderName (str):
+                - The name of the cardholder to be entered.
+
+        Returns:
+            * None
+        """
+        # card number input box: id = 'cardNumber'
+        # self.driver.find_element(By.ID, "cardNumber").send_keys(cardNumber)
+        scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.ID, "cardNumber")).send_keys(
+            cardNumber
+        )
+
+        # card expiry input box: id = 'cardExpiry'
+        self.chrome.find_element(By.ID, "cardExpiry").send_keys(cardExpiry)
+
+        # cvc input box: id = 'cardCvc'
+        self.chrome.find_element(By.ID, "cardCvc").send_keys(cvc)
+
+        # card holder name input box: id = 'billingName'
+        self.chrome.find_element(By.ID, "billingName").send_keys(cardholderName)
+
+        # country drop down: id = 'billingCountry' (default value is 'India') (No need to write)
+
+        # pay button (div) class name: 'SubmitButton-IconContainer'
+        self.chrome.find_element(By.CLASS_NAME, "SubmitButton-IconContainer").click()
