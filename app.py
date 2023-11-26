@@ -25,5 +25,30 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.service import Service
 from components import ip, google_sheets, microsoft, magzter
 from utilities import tools, scrap_tools
+
+# Loading application settings
+settings: dict = tools.loadAppSettings()
+if not settings:
+    # No settings found. Empty dictionary ({})
+    print("No settings found. Error Code: 1101")
+    exit(-1)
+
+
+# Adding chrome options based on user settings
+chromeOptions: Options = Options()
+if not settings["chrome"]["display_images"]:
+    chromeOptions.add_argument("--blink-settings=imagesEnabled=false")
+if settings["chrome"]["headless"]:
+    chromeOptions.add_argument("--headless")
+
+# Services
+service = Service(
+    executable_path=settings["chromedriver"]["executable_path"],
+    port=settings["chromedriver"]["port"],
+)
+
+# Initializing the chrome webdriver
+chrome: webdriver.Chrome = webdriver.Chrome(options=chromeOptions, service=service)
