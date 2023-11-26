@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 24th Nov 2023
+    @last-modified: 27th Nov 2023
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -18,3 +18,12 @@ r"""
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 __version__ = "0.0.0"
+
+from time import sleep
+from sys import exit
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+from components import ip, google_sheets, microsoft, magzter
+from utilities import tools, scrap_tools
