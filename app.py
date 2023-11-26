@@ -52,3 +52,14 @@ service = Service(
 
 # Initializing the chrome webdriver
 chrome: webdriver.Chrome = webdriver.Chrome(options=chromeOptions, service=service)
+
+# Fetching URLs from settings
+microsoftUrl: str = settings["url"]["microsoft"]
+outlookUrl: str = settings["url"]["outlook"]
+magzterUrl: str = settings["url"]["magzter"]
+
+
+# Tab class to handling multiple tabs. It makes easy to switch between different tabs.
+class Tab:
+    Microsoft = 0
+    Magzter = 1
