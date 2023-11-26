@@ -25,7 +25,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.service import Service
+from selenium.webdriver.chrome.service import Service
 from components import ip, google_sheets, microsoft, magzter
 from utilities import tools, scrap_tools
 
