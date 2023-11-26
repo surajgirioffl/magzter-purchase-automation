@@ -103,3 +103,25 @@ class Magzter:
 
         # clicking on verify button
         self.chrome.find_element(By.CLASS_NAME, "magzter__buttonText").click()
+
+    def resendOTP(self) -> bool:
+        """
+        Description:
+            - Method to resend the OTP for Magzter login.
+
+        Returns:
+            * bool:
+                - True if the OTP is successfully resent, False otherwise.
+                - Returns False if the current page is not Magzter login page.
+        """
+        # Magzter login page url is 'https://www.magzter.com/login/verify?from=&type=8'
+
+        if not "login" in self.chrome.current_url:
+            return False
+
+        # 'logn__socialicons__signuplinks' class (<span>) should be clicked to resend OTP.
+        scrap_tools.waitUntilElementBecomeClickable(
+            self.chrome, (By.CLASS_NAME, "logn__socialicons__signuplinks")
+        ).click()
+
+        return True
