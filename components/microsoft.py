@@ -109,3 +109,35 @@ class Microsoft:
             """document.querySelector('a[data-bi-cn="SignIn"]').target='';"""
         )
         signInButton.click()
+
+    def fetchOTP(self) -> str:
+        """
+        Description:
+            - Method to fetches the OTP (One-Time Password) received from Magzter login from the email list.
+                    - It is designed to fetch OTP received from Magzter login page.
+                    - It will return 1st encountered OTP from the email list.
+            - Must be called after opening microsoft outlook using Microsoft.openOutlook() method otherwise exception will be thrown.
+
+        Warning:
+            - This method will try to scrap and fetch the OTP from the email list.
+            - But it doesn't provide surety to fetch the OTP.
+
+        Returns:
+            * str:
+                - The OTP extracted from the email list.
+                - If no OTP is found or any issue occurs, it will return an empty string ('').
+
+        """
+        # mailsContainer = self.chrome.find_element(By.ID, "MailList")
+        mailsContainer: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
+            self.chrome, (By.ID, "MailList")
+        )
+        mailsListInString: str = mailsContainer.text  # similar as JS, <element>.innerText
+        mailsList: list[str] = mailsListInString.split("\n")
+        mailWithOTP: str = ""
+        for mail in mailsList:
+            if "is your OTP" in mail:
+                mailWithOTP = mail
+                break
+        otp: str = mailWithOTP.replace("is your OTP to authenticate your email", "").strip()
+        return otp
