@@ -36,6 +36,8 @@ if not settings:
     print("No settings found. Error Code: 1101")
     exit(-1)
 
+# Creating app required directories
+tools.createAppRequiredDirectories()
 
 # Adding chrome options based on user settings
 chromeOptions: Options = Options()
