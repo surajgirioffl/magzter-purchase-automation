@@ -199,6 +199,36 @@ def waitUntilCurrentURLExactMatchToExpectedURL(
     return wait.until(expected_conditions.url_to_be(expectedURL))
 
 
+def waitUntilCurrentURLMatchToExpectedURLRegexPattern(
+    chromeInstance: Chrome, expectedURLRegexPattern: str, maxWaitTime: int = 5
+) -> bool:
+    """
+    Description:
+        - Function to wait until the current URL matches the expected URL regex pattern.
+        - Means wait until URL changes to the URL matches the expected URL regex pattern.
+
+    Expectation:
+        - An expectation for checking the current url.
+
+    Args:
+        * chromeInstance (Chrome):
+            -The instance of the Chrome browser.
+        * expectedURLRegexPattern (str):
+            - The regex pattern that the current URL should match.
+            - Pattern is the expected pattern. This finds the first occurrence of pattern in the current url and as such does not require an exact full match
+        * maxWaitTime (int, optional):
+            - The maximum wait time in seconds.
+            - Defaults to 5.
+
+    Returns:
+        * bool:
+            - True if the current URL matches the expected URL regex pattern, False otherwise.
+    """
+    # Set a maximum wait time (in seconds)
+    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    return wait.until(expected_conditions.url_matches(expectedURLRegexPattern))
+
+
 def openNewTab(chromeInstance: Chrome) -> None:
     """
     Description:
