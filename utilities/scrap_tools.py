@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 25th Nov 2023
     @completed-on: N/A
-    @last-modified: 25th Nov 2023
+    @last-modified: 26th Nov 2023
     @error-series: 3200
     @description:
         * Module to provide specific tools requires while performing scraping.
@@ -139,6 +139,35 @@ def waitUntilElementBecomeClickable(
     wait = WebDriverWait(chromeInstance, maxWaitTime)
     element: WebElement = wait.until(expected_conditions.element_to_be_clickable(elementLocator))
     return element
+
+
+def waitUntilCurrentURLContainsExpectedURLFragment(
+    chromeInstance: Chrome, expectedURLFragment: str, maxWaitTime: int = 5
+) -> bool:
+    """
+    Description:
+        - Function to wait until the current URL contains the expected URL fragment.
+        - Means wait until URL changes to the URL contains the expected URL fragment.
+
+    Expectation:
+        - An expectation for checking that the current url contains a case- sensitive substring.
+
+    Args:
+        * chromeInstance (Chrome):
+            - The Chrome instance to use for waiting.
+        * expectedURLFragment (str):
+            - The URL fragment(part) that is expected to be present in the current URL.
+        * maxWaitTime (int, optional):
+            - The maximum time to wait for the URL fragment to appear.
+            - Defaults to 5.
+
+    Returns:
+        * bool:
+            - True if the URL contains the expected fragment within the maximum wait time, False otherwise.
+    """
+    # Set a maximum wait time (in seconds)
+    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    return wait.until(expected_conditions.url_contains(expectedURLFragment))
 
 
 def openNewTab(chromeInstance: Chrome) -> None:
