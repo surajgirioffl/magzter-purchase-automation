@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 26th Nov 2023
+    @last-modified: 27th Nov 2023
     @error-series: 2400
     @description:
         * Module to perform any operations related to magzter for the project.
@@ -15,6 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from utilities import scrap_tools
 
 
@@ -125,6 +126,78 @@ class Magzter:
         ).click()
 
         return True
+
+    def isOTPSuccessfullySubmitted(
+        self,
+        otpSubmissionPageURL: str = "https://www.magzter.com/login/verify?from=&type=8",
+        maxWaitTimeForURLChange: int = 3,
+    ) -> bool | None:
+        """
+        Description:
+            - Method to checks if OTP is successfully submitted.
+            - Must be called after Magzter.writeOTP()
+
+        Args:
+            * otpSubmissionPageURL (str):
+                - The URL of the OTP submission page.
+                - Defaults to "https://www.magzter.com/login/verify?from=&type=8".
+            * maxWaitTimeForURLChange (int):
+                - The maximum wait time in seconds for the URL to change.
+                - Defaults to 3.
+
+        Returns:
+            * bool | None:
+                - Returns True if OTP is successfully submitted,
+                - False if not successfully submitted,
+                - None if OTP is invalid and needs to be retried.
+        """
+        # How to check if OTP is successfully submitted
+        # * Solution 1 (Using error message)
+        # 'magazinename' class is a paragraph(<p>) containing error message if any error occurs.
+        # It exist when an error occurs else not present in DOM.
+        # It auto deleted from DOM when you rewrite the OTP or when no error.
+        # Auto appears when an error occurs and disappears when you rewrite the OTP or when no error.
+        # In case of invalid OTP: it contains 'Authentication failure'
+
+        # * Solution 2 (Using changes in URL)
+        # url during verification page (write otp page): https://www.magzter.com/login/verify?from=&type=8
+        # On success it will redirect to one page and again auto redirect to checkout page: https://checkout.stripe.com/c/pay/cs_live_a1KRmUlrwPLqmy590zZjzQLi5CEO1UZQxRfo6DTWiwO46tMGPrmFdV8qeF#fidkdWxOYHwnPyd1blppbHNgWlIxSFR8Nl9gXXJQPWN8S3VSdnFPMVdmRCcpJ2hsYXYnP34nYnBsYSc%2FJ0tEJyknaHBsYSc%2FJ0tEJykndmxhJz8nS0QneCknZ2BxZHYnP15YKSdpZHxqcHFRfHVgJz8ndmxrYmlgWmxxYGgnKSd3YGNgd3dgd0p3bGJsayc%2FJ21xcXV2PyoqdWR8aGBrcStoZGJ%2FcWB3K2ZqaCd4JSUl
+        # urlBeforeClickOnVerify: str = self.chrome.current_url
+        # urlAfterClickOnVerify: str = self.chrome.current_url
+        # return urlBeforeClickOnVerify != urlAfterClickOnVerify
+
+        # **** Solving using both solution****
+        # Checking if URL changes then success.
+        try:
+            scrap_tools.waitUntilCurrentURLDifferentFromExpectedURL(
+                self.chrome, otpSubmissionPageURL, maxWaitTimeForURLChange
+            )
+        except TimeoutException as e:
+            print(
+                f"No URL changes found from OTP submission page to checkout page in last {maxWaitTimeForURLChange} seconds. Error Code: 2401"
+            )
+            print("Exception:", e)
+            # Means URL did not change. So, it means OTP is not successfully submitted.
+            # So, we will error para method to find exact reason.
+            # If reason will invalid OTP then we will retry to fetch OTP from the outlook.
+            # If url changes but again this exception occurs then increase maxWaitTimeForURLChange.
+            pass
+        else:
+            # Success
+            return True
+
+        try:
+            errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+        except NoSuchElementException as e:
+            return False
+        else:
+            errorText: str = errorPara.text
+            print(f"OTP submission error: {errorText}. Error Code: 2402")
+            if errorText.strip() == "Authentication failure":
+                # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                # So, None will indicate to retry to fetch OTP from the outlook.
+                return None
+            return False
 
     def writeCardInformation(
         self, cardNumber: str, cardExpiry: str, cvc: str, cardholderName: str
