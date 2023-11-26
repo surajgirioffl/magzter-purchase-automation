@@ -75,3 +75,31 @@ class Magzter:
         )
         emailInputElement.send_keys(email)
         self.chrome.find_element(By.CLASS_NAME, "login__loginBtnnp").click()
+
+    def writeOTP(self, otp: str) -> None:
+        """
+        Description:
+            - Method to write OTP (One-Time Password) received from Magzter login.
+            - It will write OTP to respective login page of the Magzter and press 'Verify' button.
+
+        Args:
+            * otp (str):
+                - The OTP (One-Time Password) received from Magzter login.
+
+        Returns:
+            * None
+        """
+        # Writing OTP (4 digits)
+        # self.chrome.find_element(By.ID, "otp1")
+
+        # first cell of OTP (digit 1)
+        scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.ID, "otp1")).send_keys(otp[0])
+        # 2nd cell of OTP (digit 2)
+        self.chrome.find_element(By.ID, "otp2").send_keys(otp[1])
+        # 3rd cell of OTP (digit 3)
+        self.chrome.find_element(By.ID, "otp3").send_keys(otp[2])
+        # 4th cell of OTP (digit 4)
+        self.chrome.find_element(By.ID, "otp4").send_keys(otp[3])
+
+        # clicking on verify button
+        self.chrome.find_element(By.CLASS_NAME, "magzter__buttonText").click()
