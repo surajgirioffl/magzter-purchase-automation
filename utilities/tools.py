@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 25th Nov 2023
+    @last-modified: 27th Nov 2023
     @error-series: 3100
     @description:
         * Module to perform any extra operations required for the project.
@@ -14,6 +14,7 @@ __email__ = "surajgirioffl@gmail.com"
 
 import os
 import json
+from msvcrt import getch
 
 
 def createAppRequiredDirectories(
@@ -160,6 +161,24 @@ def loadLastSuccessStatistics(
     return loadJSONFile(statisticsFilePath)
 
 
+def pressAnyKeyToContinue(message: str = "Press any key to continue . . .") -> None:
+    """
+    Description:
+        - Function to prints a message and waits for the user to press any key.
+
+    Args:
+        * message (str, optional):
+            - The message to be displayed before waiting for user input.
+            - Defaults to "Press any key to continue . . .".
+
+    Returns:
+        * None
+    """
+    print(message, end="")
+    getch()
+
+
 if __name__ == "__main__":
     createAppRequiredDirectories()
     saveDictAsJSON({"key": None}, "test.json")
+    pressAnyKeyToContinue()
