@@ -197,6 +197,59 @@ class Magzter:
                 return None
             return False
 
+    def isOTPSuccessfullySubmitted_2(
+        self, urlFragmentOfCheckoutPage: str = "checkout"
+    ) -> bool | None:
+        """
+        Description:
+            - Another Method to checks if OTP is successfully submitted.
+            - Must be called after Magzter.writeOTP()
+
+        Different from isOTPSuccessfullySubmitted():
+            * This method is not bounded to wait time for URL changes.
+            * It will check both error message and changes in URL in infinite loop.
+            * Mainly developed to reduce time and increase performance of the application.
+            * In previous method, control wait for URL changes and then check error message.
+            * But it may possible error messages arose but URL not changes. So, wait time for URL changes is just waste of time.
+            * So, better idea is to check both error message and changes in URL simultaneously in infinite loop to save unwanted time of waiting.
+
+        Args:
+            * urlFragmentOfCheckoutPage (str):
+                - The URL fragment (any part of the URL) of the next page after OTP submission page which is checkout page.
+                - Defaults to "checkout".
+
+        Returns:
+            * bool | None:
+                - Returns True if OTP is successfully submitted,
+                - False if not successfully submitted,
+                - None if OTP is invalid and needs to be retried.
+        """
+
+        while True:
+            # Checking for error message.
+            try:
+                errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+            except NoSuchElementException as e:
+                pass
+            else:
+                errorText: str = errorPara.text
+                print(f"OTP submission error: {errorText}. Error Code: 2403")
+                if errorText.strip() == "Authentication failure":
+                    # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                    # So, None will indicate to retry to fetch OTP from the outlook.
+                    return None
+                return False
+
+            # checking for URL changes
+            try:
+                scrap_tools.waitUntilCurrentURLContainsExpectedURLFragment(
+                    self.chrome, urlFragmentOfCheckoutPage, 0
+                )
+            except TimeoutException as e:
+                pass
+            else:
+                return True
+
     def writeCardInformation(
         self, cardNumber: str, cardExpiry: str, cvc: str, cardholderName: str
     ) -> None:
