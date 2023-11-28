@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 27th Nov 2023
+    @last-modified: 28th Nov 2023
     @error-series: 2400
     @description:
         * Module to perform any operations related to magzter for the project.
@@ -128,9 +128,7 @@ class Magzter:
         return True
 
     def isOTPSuccessfullySubmitted(
-        self,
-        otpSubmissionPageURL: str = "https://www.magzter.com/login/verify?from=&type=8",
-        maxWaitTimeForURLChange: int = 3,
+        self, urlFragmentOfCheckoutPage: str = "checkout", maxWaitTimeForURLChange: int = 3
     ) -> bool | None:
         """
         Description:
@@ -138,11 +136,11 @@ class Magzter:
             - Must be called after Magzter.writeOTP()
 
         Args:
-            * otpSubmissionPageURL (str):
-                - The URL of the OTP submission page.
-                - Defaults to "https://www.magzter.com/login/verify?from=&type=8".
+            * urlFragmentOfCheckoutPage (str):
+                - The URL fragment (any part of the URL) of the next page after OTP submission page which is checkout page.
+                - Defaults to "checkout".
             * maxWaitTimeForURLChange (int):
-                - The maximum wait time in seconds for the URL to change.
+                - The maximum wait time in seconds for the URL to change from OTP submission page to next page (checkout page).
                 - Defaults to 3.
 
         Returns:
@@ -169,8 +167,8 @@ class Magzter:
         # **** Solving using both solution****
         # Checking if URL changes then success.
         try:
-            scrap_tools.waitUntilCurrentURLDifferentFromExpectedURL(
-                self.chrome, otpSubmissionPageURL, maxWaitTimeForURLChange
+            scrap_tools.waitUntilCurrentURLContainsExpectedURLFragment(
+                self.chrome, urlFragmentOfCheckoutPage, maxWaitTimeForURLChange
             )
         except TimeoutException as e:
             print(
