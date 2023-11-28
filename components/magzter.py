@@ -230,6 +230,7 @@ class Magzter:
             try:
                 errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
             except NoSuchElementException as e:
+                print("no error para found")
                 pass
             else:
                 errorText: str = errorPara.text
@@ -240,14 +241,25 @@ class Magzter:
                     return None
                 return False
 
-            # checking for URL changes
+            # checking for URL changes ( check for the URL fragment without waiting for any period)
+            # * Bug:
+            # Below try-except block cause stuck of the selenium. Selenium stuck and nothing happens, cursor in terminal blinks infinitely and browser got stuck.
+            # This happens only after OTP submission successful and pages switched or are switching to next. Never happened if OTP is not successfully submitted.
+            # When url is https://www.magzter.com/login/verify?from=&type=8 then no stuck happens and below try block executed.
+            # But when URL switched or switching (which is only possible if OTP submission is success and this function is called for verification) then selenium stuck at this try block.
+            # Reason: Abnormal behavior of stuck of selenium if expected_conditions.url_contains is used when url is changing and wait time is 0.
+            # Frequency: The bug is not seen most of the time but not always.
+            # So, as a workaround I made a manual check for the url fragment.
+
             try:
-                scrap_tools.waitUntilCurrentURLContainsExpectedURLFragment(
-                    self.chrome, urlFragmentOfCheckoutPage, 0
+                scrap_tools.waitUntilCurrentURLContainsExpectedURLFragment_Manual(
+                    self.chrome, urlFragmentOfCheckoutPage, 0.5
                 )
             except TimeoutException as e:
+                print("URL not match. Time out")
                 pass
             else:
+                print("Checkout page found")
                 return True
 
     def writeCardInformation(
