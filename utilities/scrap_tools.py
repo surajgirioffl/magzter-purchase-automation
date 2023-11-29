@@ -168,6 +168,52 @@ def waitUntilCurrentURLContainsExpectedURLFragment(
     return wait.until(expected_conditions.url_contains(expectedURLFragment))
 
 
+def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
+    chromeInstance: Chrome,
+    expectedURLFragment: str,
+    maxWaitTime: int = 5,
+    waitIfURLNotAvailable: bool = True,
+    valueOfCurrentURLIfURLNotAvailable: str = "data:,",
+) -> bool:
+    """
+    Description:
+        - Waits until the current URL contains the expected URL fragment (within maxWaitTime seconds).
+        - Manual way, no WebDriverWait of selenium will use in this function
+
+    Args:
+        * chromeInstance (Chrome):
+            - The Chrome instance.
+        * expectedURLFragment (str):
+            - The expected URL fragment.
+        * maxWaitTime (int, optional):
+            - The maximum wait time in seconds. Defaults to 5.
+        * waitIfURLNotAvailable (bool, optional):
+            - Whether to wait if the URL is not available.
+            - Defaults to True.
+        * valueOfCurrentURLIfURLNotAvailable (str, optional):
+            - The value of the current URL if it is not available.
+            - Defaults to "data:,".
+
+    Returns:
+        * bool:
+            - True if the current URL contains the expected URL fragment, False otherwise.
+
+    Raises:
+        * TimeoutException:
+            - If the maximum wait time is exceeded.
+    """
+    start_time: float = time()
+    while True:
+        currentURL: str = chromeInstance.current_url
+        if expectedURLFragment in currentURL:
+            return True
+        elif waitIfURLNotAvailable and valueOfCurrentURLIfURLNotAvailable == currentURL.strip():
+            continue
+        elif time() - start_time > maxWaitTime:
+            # If the maximum wait time is exceeded, break out of the loop
+            raise TimeoutException(msg="Maximum wait time exceeded.")
+
+
 def waitUntilCurrentURLExactMatchToExpectedURL(
     chromeInstance: Chrome, expectedURL: str, maxWaitTime: int = 5
 ) -> bool:
