@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 25th Nov 2023
     @completed-on: N/A
-    @last-modified: 26th Nov 2023
+    @last-modified: 28th Nov 2023
     @error-series: 3200
     @description:
         * Module to provide specific tools requires while performing scraping.
@@ -11,9 +11,11 @@
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 
+from time import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import Chrome
 
 
@@ -53,9 +55,7 @@ def waitUntilElementLoadedInDOM(
     """
     # Set a maximum wait time (in seconds)
     wait = WebDriverWait(chromeInstance, maxWaitTime)
-    element: WebElement = wait.until(
-        expected_conditions.presence_of_element_located(elementLocator)
-    )
+    element: WebElement = wait.until(expected_conditions.presence_of_element_located(elementLocator))
     return element
 
 
@@ -95,9 +95,7 @@ def waitUntilElementBecomeVisible(
     """
     # Set a maximum wait time (in seconds)
     wait = WebDriverWait(chromeInstance, maxWaitTime)
-    element: WebElement = wait.until(
-        expected_conditions.visibility_of_element_located(elementLocator)
-    )
+    element: WebElement = wait.until(expected_conditions.visibility_of_element_located(elementLocator))
     return element
 
 
