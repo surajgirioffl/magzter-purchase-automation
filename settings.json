@@ -1,1 +1,75 @@
-{}
+{
+    "chromedriver": {
+        "executable_path": null,
+        "port": 0
+    },
+    "url": {
+        "magzter": "https://2my.site/UfBtX0z",
+        "microsoft": "https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=13&ct=1623770834&rver=7.0.6737.0&wp=MBI_SSL&wreply=https%3a%2f%2foutlook.live.com%2fowa%2f0%2f%3fstate%3d1%26redirectTo%3daHR0cHM6Ly9vdXRsb29rLmxpdmUuY29tL21haWwvMC8%26nlp%3d1%26RpsCsrfState%3d39e65a86-79c0-29b2-0fef-3613ffbfb983&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob%2cflname%2cwld&cobrandid=90015",
+        "outlook": "https://outlook.live.com/mail/0/"
+    },
+    "chrome": {
+        "display_images": false,
+        "headless": false
+    },
+    "magzter": {},
+    "microsoft": {
+        "otp_waiting_time": 3
+    },
+    "spreadsheet": {
+        "current": {
+            "name": null,
+            "url": null,
+            "id": null,
+            "sheet_name": null
+        },
+        "data_start_row": 2,
+        "headers_with_column": {
+            "sno": "A",
+            "date": "B",
+            "ip": "C",
+            "microsoft_email": "D",
+            "password": "E",
+            "magzter_email": "F",
+            "card_number": "G",
+            "card_expiry": "H",
+            "card_cvv": "I",
+            "cardholder_name": "J",
+            "corporate": "K",
+            "employee_id": "L",
+            "type": "M",
+            "ip_same_check": "N",
+            "names": "O",
+            "length": "P",
+            "status": "Q"
+        },
+        "headers_with_index": {
+            "sno": 0,
+            "date": 1,
+            "ip": 2,
+            "microsoft_email": 3,
+            "password": 4,
+            "magzter_email": 5,
+            "card_number": 6,
+            "card_expiry": 7,
+            "card_cvv": 8,
+            "cardholder_name": 9,
+            "corporate": 10,
+            "employee_id": 11,
+            "type": 12,
+            "ip_same_check": 13,
+            "names": 14,
+            "length": 15,
+            "status": 16
+        }
+    },
+    "app": {
+        "last_success_stat_file": "appdata/last_success_statistics.json",
+        "required_directories": [
+            "backups",
+            "appdata/history",
+            "appdata/databases",
+            "appdata/history/last-success-statics"
+        ]
+    }
+}
