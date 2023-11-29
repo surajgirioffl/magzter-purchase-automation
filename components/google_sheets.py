@@ -16,6 +16,7 @@ from typing import Literal, Any
 from sys import exit
 import gspread
 from gspread.utils import ExportFormat
+from utilities.tools import pressAnyKeyToContinue
 
 
 class GoogleSheets:
@@ -70,7 +71,10 @@ class GoogleSheets:
                 "Something went wrong while connecting to Google Sheets (May be credentials file not found). Error Code: 2201"
             )
             print("Exception:", e)
-            exit(-1) if exitOnError else None
+            if exitOnError:
+                print("Exiting...")
+                pressAnyKeyToContinue()
+                exit(-1) 
 
         # Opening the desired spreadsheet
         try:
@@ -85,7 +89,11 @@ class GoogleSheets:
                 "Something went wrong while fetching the spreadsheet. Error Code: 2202"
             )
             print("Exception:", e)
-            exit(-1) if exitOnError else None
+            if exitOnError:
+                print("Exiting...")
+                pressAnyKeyToContinue()
+                exit(-1) 
+
 
         # Opening the desired worksheet
         try:
@@ -96,7 +104,10 @@ class GoogleSheets:
         except Exception as e:
             print("Something went wrong while fetching the worksheet. Error Code: 2203")
             print("Exception:", e)
-            exit(-1) if exitOnError else None
+            if exitOnError:
+                print("Exiting...")
+                pressAnyKeyToContinue()
+                exit(-1) 
 
     def __del__(self):
         """
