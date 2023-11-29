@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 27th Nov 2023
+    @last-modified: 29th Nov 2023
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -21,6 +21,11 @@ __version__ = "0.0.0"
 
 from time import sleep
 from sys import exit
+from os.path import exists
+from shutil import move
+from os import remove
+from datetime import datetime
+from typing import Literal, Any
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -28,16 +33,18 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from components import ip, google_sheets, microsoft, magzter
 from utilities import tools, scrap_tools
+from db_scripts import spreadsheet_db
 
 # Loading application settings
 settings: dict = tools.loadAppSettings()
 if not settings:
     # No settings found. Empty dictionary ({})
     print("No settings found. Error Code: 1101")
+    tools.pressAnyKeyToContinue()
     exit(-1)
 
 # Creating app required directories
-tools.createAppRequiredDirectories()
+tools.createAppRequiredDirectories(settings["app"]["required_directories"])
 
 # Adding chrome options based on user settings
 chromeOptions: Options = Options()
@@ -65,3 +72,276 @@ magzterUrl: str = settings["url"]["magzter"]
 class Tab:
     Microsoft = 0
     Magzter = 1
+
+
+# *************************************Spreadsheet Operations*************************************
+def performInitialSpreadsheetOperations() -> tuple[str, str, google_sheets.GoogleSheets]:
+    spreadSheetName: str | None = settings["spreadsheet"]["current"]["name"]
+    sheetName: str | None = settings["spreadsheet"]["current"]["sheet_name"]
+
+    def inputFromUserIfNone(name: str | None, title: str) -> str:
+        if name is None:
+            while True:
+                name = input(f"Write {title} name: ")
+                if name:
+                    return name
+                else:
+                    print(f"Invalid {title} name.")
+                    print("Write again...")
+        return name
+
+    spreadSheetName = inputFromUserIfNone(spreadSheetName, "spreadsheet")
+    sheetName = inputFromUserIfNone(sheetName, "sheet")
+
+    print(f"Fetching spreadsheet {spreadSheetName}...")
+    gs = google_sheets.GoogleSheets(spreadSheetName, sheetTitleOrIndex=sheetName)
+
+    print(f"Exporting spreadsheet to backups/{spreadSheetName}.xlsx if not exported earlier.")
+
+    if exists(f"backups/{spreadSheetName}.xlsx"):
+        print(
+            f"Spreadsheet {spreadSheetName} is already exported earlier and exists in the backup directory."
+        )
+    else:
+        print("Exporting...")
+        print("It may take time as per size of spreadsheet and speed of internet connection.")
+        if gs.exportSpreadsheet(f"backups/{spreadSheetName}.xlsx"):
+            print("Spreadsheet exported successfully...")
+        else:
+            print("Something went wrong while exporting the spreadsheet. Error Code: 1102")
+
+    return spreadSheetName, sheetName, gs
+
+
+# ************************************Fetching RowNumber To Start************************************
+def fetchRowNumberToStart(spreadSheetName: str, sheetName: str, lastSuccessStatFilePath: str):
+    # Checking if current spreadsheet is used last time or not
+    if exists(lastSuccessStatFilePath):
+        # Resuming after last success row
+        lastSuccessStat: dict = tools.loadLastSuccessStatistics(lastSuccessStatFilePath)
+        if lastSuccessStat["spreadsheet"] == spreadSheetName and lastSuccessStat["sheet_name"] == sheetName:
+            return lastSuccessStat["row"]
+        else:
+            print(
+                "Conflict in spreadsheet name. Current spreadsheet name and spreadsheet name in last_success_stat_file don't match.  Error Code: 1103"
+            )
+            tools.pressAnyKeyToContinue()
+            exit(-1)
+    else:
+        # Starting from scratch
+        return settings["spreadsheet"]["data_start_row"]
+
+
+class Menu:
+    @staticmethod
+    def confirmationMenu() -> None:
+        print("=========================CONFIRMATION MENU=============================")
+        print("Press 1 if Payment Successful.")
+        print("Press 2 if Payment Failed.")
+
+
+def confirmPaymentStatus() -> bool:
+    while True:
+        Menu.confirmationMenu()
+        choice: str = input("Write your choice: ")
+        if choice == "1":
+            # Payment Success
+            return True
+        if choice == "2":
+            # Payment Failed
+            return False
+        else:
+            print("Invalid choice...")
+
+
+def createLastSuccessStatJSONFile(
+    spreadsheetName: str = None,
+    sheetName: str = None,
+    ip: str = None,
+    row: int = 2,
+    dateTime=datetime.today(),
+    lastSuccessStatFilePath: str = "appdata/last_success_statistics.json",
+) -> None:
+    # As per format of the last_success_stat_file.
+    data = {
+        "spreadsheet": spreadsheetName,
+        "sheet": sheetName,
+        "ip": ip,
+        "row": row,
+        "date_time": dateTime,
+    }
+    tools.saveDictAsJSON(data, lastSuccessStatFilePath)
+
+
+def getUniqueIPAddress(spreadsheetDb: spreadsheet_db.Spreadsheet) -> str:
+    while True:
+        print("Fetching your current IP address...")
+        currentIP: str = ip.getCurrentIP()
+        if currentIP:
+            print(f"Your current IP address: {currentIP}")
+            # Checking if IP exits or not
+            if spreadsheetDb.isIpExists(currentIP):
+                print("IP already exists in the current sheet.")
+                print("Please change your IP..")
+            else:
+                return currentIP
+        else:
+            print("Invalid IP address. Please try again...")
+
+        tools.pressAnyKeyToContinue("Press any key to continue to check again.")
+
+
+def main() -> None:
+    # *********************************Scraping Objects & Variables*********************************
+    spreadSheetName, sheetName, gs = performInitialSpreadsheetOperations()  # gs is a GoogleSheets object
+    ms: microsoft.Microsoft = microsoft.Microsoft(chrome)
+    mg: magzter.Magzter = magzter.Magzter(chrome)
+
+    lastSuccessStatFilePath: str = settings["app"]["last_success_stat_file"]
+    headersWithIndex: dict = settings["spreadsheet"]["headers_with_index"]
+    headersWithColumn: dict = settings["spreadsheet"]["headers_with_column"]
+
+    spreadsheetDb = spreadsheet_db.Spreadsheet(spreadSheetName, sheetName)
+
+    # Scraping Starts
+    # *************************************Scraping Starts*************************************
+
+    # TODO -> Fetching desired row number to start and data of the respective row from the Google sheet
+    rowNumber: int = fetchRowNumberToStart(spreadSheetName, sheetName, lastSuccessStatFilePath)
+    index = 0
+
+    while True:
+        print(f"\n\n======================== FOR ROW NUMBER {rowNumber} ========================")
+        # TODO -> Checking IP
+        print("Fetching your current IP address...")
+        currentIP = getUniqueIPAddress(spreadsheetDb)
+
+        print(f"Fetching contents of row number {rowNumber}...")
+        rowData: list = gs.getRowValues(rowNumber)
+        if not rowData:
+            # If the row is empty. Means all rows have been fetched.
+            # Complete the transaction and exit.
+            move(lastSuccessStatFilePath, "appdata/history/last-success-statics/")
+            print(
+                f"Scraping and manipulation of sheet {sheetName} of Spreadsheet {spreadSheetName} completed successfully..."
+            )
+            print("Last success stat file removed successfully...")
+            break
+
+        print(f"Fetched row data: {rowData}")
+
+        # TODO -> Login to Microsoft and open outlook
+        # Microsoft in tab index 0
+        print("Login to Microsoft and open Outlook...")
+        email: str = rowData[headersWithIndex["microsoft_email"]]
+        password: str = rowData[headersWithIndex["password"]]
+        scrap_tools.switchTab(chrome, Tab.Microsoft)
+        ms.login(microsoftUrl, email, password)
+        ms.openOutlook(outlookUrl)
+
+        # TODO -> Login to Magzter till send OTP
+        # New tab only if first time browser open in current session
+        if index == 0:
+            scrap_tools.openNewTab(chrome)
+        # Magzter in tab index 1
+        print("Login to Magzter and send OTP...")
+        scrap_tools.switchTab(chrome, Tab.Magzter)
+        mg.login(magzterUrl, email)  # OTP sent
+
+        # TODO -> Fetching and writing OTP
+        print("Fetching and writing OTP...")
+        while True:
+            print("-- Fetching and Writing OTP")
+            # Fetching OTP from microsoft tab
+            scrap_tools.switchTab(chrome, Tab.Microsoft)
+            otp: str = ms.fetchOTP()
+            print("otp: ", otp)
+
+            # Writing OTP to magzter tab
+            scrap_tools.switchTab(chrome, Tab.Magzter)
+            mg.writeOTP(otp)
+
+            # status: bool | None = mg.isOTPSuccessfullySubmitted(maxWaitTimeForURLChange=5) # Time consuming.
+            status: bool | None = mg.isOTPSuccessfullySubmitted_2()
+            print("Returned from isOTPSuccessfullySubmitted_2")
+            print("status:", status)
+
+            if status:
+                # OTP successfully submitted. So, break the loop.
+                print("OTP successfully submitted..")
+                break
+            elif status is None:
+                # Invalid OTP. So, retry to fetch OTP.
+                print("Invalid OTP. Retrying to fetch OTP...")
+                continue
+            else:
+                # Some other error. So, switch the control to user.
+                otpByUser = input("Write OTP: ")
+                # Writing OTP to magzter tab
+                mg.writeOTP(otp)
+                break
+
+        # TODO -> Fetching and writing card information
+        print("Fetching and writing card information...")
+        carNumber: str = rowData[headersWithIndex["card_number"]]
+        cardExpiry: str = rowData[headersWithIndex["card_expiry"]]
+        cardCvv: str = rowData[headersWithIndex["card_cvv"]]
+        cardholderName: str = rowData[headersWithIndex["cardholder_name"]]
+        mg.writeCardInformation(carNumber, cardExpiry, cardCvv, cardholderName)
+
+        print("\n")
+        paymentStatus = confirmPaymentStatus()
+        paymentStatus = "Success" if paymentStatus else "Failed"
+
+        # TODO -> Updating the current row of google sheet with new desired information
+        print("Updating the current row of google sheet with new desired information")
+        cellValueDict: dict = {
+            f"{headersWithColumn['ip']}{rowNumber}": currentIP,
+            f"{headersWithColumn['ip_same_check']}{rowNumber}": "False",
+            f"{headersWithColumn['status']}{rowNumber}": paymentStatus,
+        }
+        gs.updateMultipleCells(cellValueDict)
+
+        # TODO -> Updating the last success stat file
+        createLastSuccessStatJSONFile(
+            spreadSheetName, sheetName, currentIP, rowNumber, lastSuccessStatFilePath=lastSuccessStatFilePath
+        )
+
+        # TODO -> Inserting the current ip to the database.
+        print("Inserting the current ip to the database...")
+        spreadsheetDb.insertIp(currentIP)
+
+        print("Clearing all cookies...")
+        chrome.delete_all_cookies()  # Clearing all cookies from the browser.
+        rowNumber += 1  # incrementing the row number
+        index += 1
+
+
+if __name__ == "__main__":
+    while True:
+        try:
+            main()
+        except Exception as e:
+            print("Something went wrong while automating the stuffs. Error Code: 1104")
+            print("Exception:", e)
+
+            print("\nPress enter to try again or '#' to exit.")
+            if input() == "#":
+                tools.pressAnyKeyToContinue()
+                exit(-1)
+            else:
+                print("Trying again...")
+                continue
+        try:
+            sleep(60)
+            print("Closing browser in a minute.. (Press CTRL + C to close now)")
+        except KeyboardInterrupt as e:
+            tools.pressAnyKeyToContinue()
+            chrome.close()
+            chrome.close()
+            chrome.quit()
+            exit(0)
+        else:
+            chrome.close()
+            chrome.close()
+            chrome.quit()
