@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 29th Nov 2023
+    @last-modified: 30th Nov 2023
     @error-series: 2100
     @description:
         * Module to perform any operations related to IP for the project including fetching the current IP, IP comparison and more..
@@ -15,7 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 import requests
 
 
-def getCurrentIP(sourceAPIEndpoint: str = "https://api.ipify.org/") -> str:
+def getCurrentIP(sourceAPIEndpoint: str = "https://api.bigdatacloud.net/data/client-ip") -> str:
     """
     Description:
         - Function to fetch the current IP from the specified API.
@@ -23,7 +23,7 @@ def getCurrentIP(sourceAPIEndpoint: str = "https://api.ipify.org/") -> str:
     Args:
         * sourceAPIEndpoint (str, optional):
             - API endpoint to fetch the current IP.
-            - Defaults to "https://api.ipify.org/".
+            - Defaults to "https://api.bigdatacloud.net/data/client-ip".
 
     Returns:
         * str:
@@ -41,7 +41,7 @@ def getCurrentIP(sourceAPIEndpoint: str = "https://api.ipify.org/") -> str:
         return ""
     else:
         if response.status_code == 200:
-            return response.text.strip()
+            return response.json()['ipString']
         else:
             print("Something went wrong while fetching current IP. Error Code: 2102")
             print("Status Code:", response.status_code)
