@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 27th Nov 2023
+    @last-modified: 29th Nov 2023
     @error-series: 3100
     @description:
         * Module to perform any extra operations required for the project.
@@ -174,7 +174,7 @@ def pressAnyKeyToContinue(message: str = "Press any key to continue . . .") -> N
     Returns:
         * None
     """
-    print(message, end="")
+    print(message, end="", flush=True)
     getch()
 
 
