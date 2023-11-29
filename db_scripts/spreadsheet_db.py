@@ -66,3 +66,29 @@ class Spreadsheet:
         if self.connectionStatus:
             self.conn.commit()
             self.conn.close()
+
+    def isIpExists(self, ip: str) -> bool:
+        """
+        Description:
+            - Method to check if the given IP address exists in the specified sheet(table) of the database(spreadsheet).
+
+        Parameters:
+            * ip (str):
+                - The IP address to be checked.
+
+        * Returns:
+            * bool:
+                - True if the IP address exists in the table, False otherwise.
+        """
+        try:
+            self.cursor.execute(
+                f"""-- sql
+                    SELECT * FROM `{self.tableName}`
+                    WHERE ip = '{ip}'
+                """
+            )
+        except Exception as e:
+            print("Something went wrong while checking if IP exists. Error Code: 4203")
+            print("Exception: ", e)
+        else:
+            return self.cursor.fetchone() is not None
