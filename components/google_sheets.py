@@ -74,7 +74,7 @@ class GoogleSheets:
             if exitOnError:
                 print("Exiting...")
                 pressAnyKeyToContinue()
-                exit(-1) 
+                exit(-1)
 
         # Opening the desired spreadsheet
         try:
@@ -85,15 +85,12 @@ class GoogleSheets:
             elif openSpreadsheetBy == "id":
                 self.spreadsheet = self.client.open_by_key(ValueOfOpenSpreadsheetBy)
         except Exception as e:
-            print(
-                "Something went wrong while fetching the spreadsheet. Error Code: 2202"
-            )
+            print("Something went wrong while fetching the spreadsheet. Error Code: 2202")
             print("Exception:", e)
             if exitOnError:
                 print("Exiting...")
                 pressAnyKeyToContinue()
-                exit(-1) 
-
+                exit(-1)
 
         # Opening the desired worksheet
         try:
@@ -107,7 +104,7 @@ class GoogleSheets:
             if exitOnError:
                 print("Exiting...")
                 pressAnyKeyToContinue()
-                exit(-1) 
+                exit(-1)
 
     def __del__(self):
         """
@@ -118,9 +115,7 @@ class GoogleSheets:
     def exportSpreadsheet(
         self,
         filenameOrPathWithExtension: str,
-        exportFormat: Literal[
-            "PDF", "EXCEL", "CSV", "OPEN_OFFICE_SHEET", "TSV", "ZIPPED_HTML"
-        ] = "EXCEL",
+        exportFormat: Literal["PDF", "EXCEL", "CSV", "OPEN_OFFICE_SHEET", "TSV", "ZIPPED_HTML"] = "EXCEL",
     ) -> bool:
         """
         Description:
@@ -143,9 +138,7 @@ class GoogleSheets:
             with open(filenameOrPathWithExtension, "wb") as file:
                 file.write(contents)
         except Exception as e:
-            print(
-                "Something went wrong while exporting the spreadsheet. Error Code: 2204"
-            )
+            print("Something went wrong while exporting the spreadsheet. Error Code: 2204")
             print("Exception:", e)
             return False
         else:
