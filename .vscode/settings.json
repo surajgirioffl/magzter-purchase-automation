@@ -1,6 +1,16 @@
 {
     "cSpell.words": [
-        "Magzter"
+        "acell",
+        "appdata",
+        "Btnnp",
+        "gspread",
+        "logn",
+        "magazinename",
+        "Magzter",
+        "signuplinks",
+        "socialicons",
+        "webelement"
     ],
-    "window.title": "Magzter Purchase Automation"
+    "window.title": "Magzter Purchase Automation",
+    "editor.inlineSuggest.showToolbar": "onHover",
 }
