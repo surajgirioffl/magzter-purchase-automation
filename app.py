@@ -20,6 +20,7 @@ __email__ = "surajgirioffl@gmail.com"
 __version__ = "1.0.0"
 
 from time import sleep
+from warnings import filterwarnings
 from sys import exit
 from os.path import exists
 from shutil import move
@@ -34,6 +35,9 @@ from selenium.webdriver.chrome.service import Service
 from components import ip, google_sheets, microsoft, magzter
 from utilities import tools, scrap_tools
 from db_scripts import spreadsheet_db
+
+# Filter warnings
+filterwarnings("ignore")
 
 # Loading application settings
 settings: dict = tools.loadAppSettings()
