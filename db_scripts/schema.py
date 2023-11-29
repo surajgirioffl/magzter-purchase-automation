@@ -10,3 +10,16 @@
 """
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
+
+
+class Spreadsheet:
+    @staticmethod
+    def getIPTableSchema(tableName: str) -> str:
+        schema: str = f"""-- sql
+                        CREATE TABLE IF NOT EXISTS `{tableName}`
+                        (
+                            `ip` VARCHAR(50) PRIMARY KEY NOT NULL,
+                            `inserted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                        );
+                    """
+        return schema
