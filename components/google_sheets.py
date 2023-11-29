@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 25th Nov 2023
+    @last-modified: 29th Nov 2023
     @error-series: 2200
     @description:
         * Module to perform any operation related to the Google Sheets required for the project.
@@ -16,6 +16,7 @@ from typing import Literal, Any
 from sys import exit
 import gspread
 from gspread.utils import ExportFormat
+from gspread.exceptions import APIError, WorksheetNotFound, SpreadsheetNotFound
 from utilities.tools import pressAnyKeyToContinue
 
 
@@ -84,6 +85,13 @@ class GoogleSheets:
                 self.spreadsheet = self.client.open_by_url(ValueOfOpenSpreadsheetBy)
             elif openSpreadsheetBy == "id":
                 self.spreadsheet = self.client.open_by_key(ValueOfOpenSpreadsheetBy)
+        except SpreadsheetNotFound as e:
+            print("The specified spreadsheet not found. Error Code: 2205")
+            print("Exception: ", e)
+            if exitOnError:
+                print("Exiting...")
+                pressAnyKeyToContinue()
+                exit(-1)
         except Exception as e:
             print("Something went wrong while fetching the spreadsheet. Error Code: 2202")
             print("Exception:", e)
@@ -98,6 +106,13 @@ class GoogleSheets:
                 self.worksheet = self.spreadsheet.get_worksheet(sheetTitleOrIndex)
             else:
                 self.worksheet = self.spreadsheet.worksheet(sheetTitleOrIndex)
+        except WorksheetNotFound as e:
+            print("The specified worksheet not found. Error Code: 2206")
+            print("Exception: ", e)
+            if exitOnError:
+                print("Exiting...")
+                pressAnyKeyToContinue()
+                exit(-1)
         except Exception as e:
             print("Something went wrong while fetching the worksheet. Error Code: 2203")
             print("Exception:", e)
