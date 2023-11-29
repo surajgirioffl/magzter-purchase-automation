@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 24th Nov 2023
+    @last-modified: 29th Nov 2023
     @error-series: 2100
     @description:
         * Module to perform any operations related to IP for the project including fetching the current IP, IP comparison and more..
@@ -38,6 +38,7 @@ def getCurrentIP(sourceAPIEndpoint: str = "https://api.ipify.org/") -> str:
     except Exception as e:
         print("Something went wrong while fetching current IP. Error Code: 2101")
         print("Exception:", e)
+        return ""
     else:
         if response.status_code == 200:
             return response.text.strip()
