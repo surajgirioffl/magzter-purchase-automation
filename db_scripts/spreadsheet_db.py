@@ -92,3 +92,41 @@ class Spreadsheet:
             print("Exception: ", e)
         else:
             return self.cursor.fetchone() is not None
+
+    def insertIp(self, ip: str) -> None:
+        """"""
+        """
+        Description:
+            - Method to insert an IP address into the database.
+
+        Args:
+            *ip (str):
+                - The IP address to insert.
+
+        Returns:
+            * None:
+                - This function does not return anything.
+
+        Raises:
+            * Exception: If there is an error while inserting the IP address.
+        """
+        try:
+            self.cursor.execute(
+                f"""-- sql
+                    INSERT INTO `{self.tableName}` (ip)
+                    VALUES('{ip}')
+                """
+            )
+        except Exception as e:
+            print("Something went wrong while inserting IP. Error Code: 4204")
+            print("Exception: ", e)
+            raise e.__class__(e)
+        else:
+            self.conn.commit()
+
+
+if __name__ == "__main__":
+    spreadsheet = Spreadsheet("test", "temp")
+    print(spreadsheet.isIpExists("127.9.61.92"))
+    print(spreadsheet.isIpExists("128.9.61.93"))
+    spreadsheet.insertIp("128.9.61.93")
