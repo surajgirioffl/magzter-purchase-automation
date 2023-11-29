@@ -19,7 +19,7 @@ class Spreadsheet:
                         CREATE TABLE IF NOT EXISTS `{tableName}`
                         (
                             `ip` VARCHAR(50) PRIMARY KEY NOT NULL,
-                            `inserted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                            `inserted_at` DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime'))
                         );
                     """
         return schema
