@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 29th Nov 2023
+    @last-modified: 30th Nov 2023
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -260,6 +260,9 @@ def main() -> None:
             scrap_tools.switchTab(chrome, Tab.Microsoft)
             otp: str = ms.fetchOTP()
             print("otp: ", otp)
+            if not otp.strip():
+                print("OTP is empty. Retrying to fetch OTP...")
+                continue
 
             # Writing OTP to magzter tab
             scrap_tools.switchTab(chrome, Tab.Magzter)
