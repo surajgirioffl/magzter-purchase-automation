@@ -64,9 +64,7 @@ class Magzter:
 
         # 'Claim Now' button
         # self.chrome.find_element(By.TAG_NAME, "button").click()
-        button: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
-            self.chrome, (By.TAG_NAME, "button")
-        )
+        button: WebElement = scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.TAG_NAME, "button"))
         button.click()
 
         # DOM is same and elements are present but focus page content changed. So, no need to use wait-until-load concept because already loaded.
@@ -197,9 +195,7 @@ class Magzter:
                 return None
             return False
 
-    def isOTPSuccessfullySubmitted_2(
-        self, urlFragmentOfCheckoutPage: str = "checkout"
-    ) -> bool | None:
+    def isOTPSuccessfullySubmitted_2(self, urlFragmentOfCheckoutPage: str = "checkout") -> bool | None:
         """
         Description:
             - Another Method to checks if OTP is successfully submitted.
@@ -262,9 +258,7 @@ class Magzter:
                 print("Checkout page found")
                 return True
 
-    def writeCardInformation(
-        self, cardNumber: str, cardExpiry: str, cvc: str, cardholderName: str
-    ) -> None:
+    def writeCardInformation(self, cardNumber: str, cardExpiry: str, cvc: str, cardholderName: str) -> None:
         """
         Description:
             - Method to writes the card information to the corresponding input boxes on the checkout page of Magzter and proceed.
@@ -285,9 +279,7 @@ class Magzter:
         """
         # card number input box: id = 'cardNumber'
         # self.driver.find_element(By.ID, "cardNumber").send_keys(cardNumber)
-        scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.ID, "cardNumber")).send_keys(
-            cardNumber
-        )
+        scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.ID, "cardNumber")).send_keys(cardNumber)
 
         # card expiry input box: id = 'cardExpiry'
         self.chrome.find_element(By.ID, "cardExpiry").send_keys(cardExpiry)
