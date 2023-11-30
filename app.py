@@ -319,7 +319,11 @@ def main() -> None:
         spreadsheetDb.insertIp(currentIP)
 
         print("Clearing all cookies...")
-        chrome.delete_all_cookies()  # Clearing all cookies from the browser.
+        scrap_tools.switchTab(chrome, Tab.Magzter)
+        chrome.delete_all_cookies()  # Clearing all cookies of magzter.
+        scrap_tools.switchTab(chrome, Tab.Microsoft)
+        chrome.delete_all_cookies()  # Clearing all cookies of microsoft.
+        print("Cookies of all tabs cleared...")
         rowNumber += 1  # incrementing the row number
         index += 1
 
