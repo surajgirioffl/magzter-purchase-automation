@@ -123,8 +123,8 @@ def fetchRowNumberToStart(spreadSheetName: str, sheetName: str, lastSuccessStatF
     if exists(lastSuccessStatFilePath):
         # Resuming after last success row
         lastSuccessStat: dict = tools.loadLastSuccessStatistics(lastSuccessStatFilePath)
-        if lastSuccessStat["spreadsheet"] == spreadSheetName and lastSuccessStat["sheet_name"] == sheetName:
-            return lastSuccessStat["row"]
+        if lastSuccessStat["spreadsheet"] == spreadSheetName and lastSuccessStat["sheet"] == sheetName:
+            return int(lastSuccessStat["row"]) + 1
         else:
             print(
                 "Conflict in spreadsheet name. Current spreadsheet name and spreadsheet name in last_success_stat_file don't match.  Error Code: 1103"
