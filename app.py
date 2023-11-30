@@ -327,7 +327,9 @@ def main() -> None:
 
         # Closing the browser
         print("Closing the browser..")
-        chrome.quit()
+        # Ensure that chrome.quit() is called regardless of what happens.
+        if "chrome" in locals() and hasattr(chrome, "quit"):
+            chrome.quit()
 
 
 if __name__ == "__main__":
