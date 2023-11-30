@@ -163,7 +163,7 @@ def createLastSuccessStatJSONFile(
     sheetName: str = None,
     ip: str = None,
     row: int = 2,
-    dateTime=datetime.today(),
+    dateTime: str = str(datetime.today()),
     lastSuccessStatFilePath: str = "appdata/last_success_statistics.json",
 ) -> None:
     # As per format of the last_success_stat_file.
