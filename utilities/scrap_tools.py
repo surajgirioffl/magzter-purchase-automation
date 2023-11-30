@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 25th Nov 2023
     @completed-on: N/A
-    @last-modified: 28th Nov 2023
+    @last-modified: 30th Nov 2023
     @error-series: 3200
     @description:
         * Module to provide specific tools requires while performing scraping.
@@ -204,9 +204,14 @@ def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
     """
     start_time: float = time()
     while True:
-        currentURL: str = chromeInstance.current_url
+        # currentURL: str = chromeInstance.current_url # When url changes then it get stuck and new url not returned 
+        # Implementing javascript to fetch the current url (It may help to fix the stuck issue of selenium at this point)
+        currentURL: str = chromeInstance.execute_script("return window.location.host;")
+        # print("Current URL:", currentURL)
         if expectedURLFragment in currentURL:
             return True
+        elif not currentURL:
+            continue
         elif waitIfURLNotAvailable and valueOfCurrentURLIfURLNotAvailable == currentURL.strip():
             continue
         elif time() - start_time > maxWaitTime:
