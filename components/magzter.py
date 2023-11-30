@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 28th Nov 2023
+    @last-modified: 30th Nov 2023
     @error-series: 2400
     @description:
         * Module to perform any operations related to magzter for the project.
@@ -230,7 +230,7 @@ class Magzter:
             try:
                 errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
             except NoSuchElementException as e:
-                print("no error para found")
+                # print("no error para found")
                 pass
             else:
                 errorText: str = errorPara.text
@@ -256,7 +256,7 @@ class Magzter:
                     self.chrome, urlFragmentOfCheckoutPage, 0.5
                 )
             except TimeoutException as e:
-                print("URL not match. Time out")
+                # print("URL not match. Time out")
                 pass
             else:
                 print("Checkout page found")
