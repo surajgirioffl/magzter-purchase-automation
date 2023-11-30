@@ -63,9 +63,6 @@ service = Service(
     port=settings["chromedriver"]["port"],
 )
 
-# Initializing the chrome webdriver
-chrome: webdriver.Chrome = webdriver.Chrome(options=chromeOptions, service=service)
-
 # Fetching URLs from settings
 microsoftUrl: str = settings["url"]["microsoft"]
 outlookUrl: str = settings["url"]["outlook"]
@@ -192,14 +189,12 @@ def getUniqueIPAddress(spreadsheetDb: spreadsheet_db.Spreadsheet) -> str:
         else:
             print("Invalid IP address. Please try again...")
 
-        tools.pressAnyKeyToContinue("Press any key to continue to check again.")
+        tools.pressAnyKeyToContinue("\nPress any key to continue to check again.")
 
 
 def main() -> None:
     # *********************************Scraping Objects & Variables*********************************
     spreadSheetName, sheetName, gs = performInitialSpreadsheetOperations()  # gs is a GoogleSheets object
-    ms: microsoft.Microsoft = microsoft.Microsoft(chrome)
-    mg: magzter.Magzter = magzter.Magzter(chrome)
 
     lastSuccessStatFilePath: str = settings["app"]["last_success_stat_file"]
     headersWithIndex: dict = settings["spreadsheet"]["headers_with_index"]
@@ -215,6 +210,15 @@ def main() -> None:
     index = 0
 
     while True:
+        # New browser session (Because clear cookies is not working for microsoft)
+        # Initializing the chrome webdriver
+        print("\nInitializing a new browser session...")
+        chrome: webdriver.Chrome = webdriver.Chrome(options=chromeOptions, service=service)
+
+        # Initializing the objects of Microsoft and Magzter
+        ms: microsoft.Microsoft = microsoft.Microsoft(chrome)
+        mg: magzter.Magzter = magzter.Magzter(chrome)
+
         print(f"\n\n======================== FOR ROW NUMBER {rowNumber} ========================")
         # TODO -> Checking IP
         print("Fetching your current IP address...")
@@ -244,9 +248,8 @@ def main() -> None:
         ms.openOutlook(outlookUrl)
 
         # TODO -> Login to Magzter till send OTP
-        # New tab only if first time browser open in current session
-        if index == 0:
-            scrap_tools.openNewTab(chrome)
+        # Opening new tab for Magzter
+        scrap_tools.openNewTab(chrome)
         # Magzter in tab index 1
         print("Login to Magzter and send OTP...")
         scrap_tools.switchTab(chrome, Tab.Magzter)
@@ -318,14 +321,13 @@ def main() -> None:
         print("Inserting the current ip to the database...")
         spreadsheetDb.insertIp(currentIP)
 
-        print("Clearing all cookies...")
-        scrap_tools.switchTab(chrome, Tab.Magzter)
-        chrome.delete_all_cookies()  # Clearing all cookies of magzter.
-        scrap_tools.switchTab(chrome, Tab.Microsoft)
-        chrome.delete_all_cookies()  # Clearing all cookies of microsoft.
-        print("Cookies of all tabs cleared...")
+        # Updating the row number and index
         rowNumber += 1  # incrementing the row number
         index += 1
+
+        # Closing the browser
+        print("Closing the browser..")
+        chrome.quit()
 
 
 if __name__ == "__main__":
@@ -338,21 +340,11 @@ if __name__ == "__main__":
 
             print("\nPress enter to try again or '#' to exit.")
             if input() == "#":
-                tools.pressAnyKeyToContinue()
+                input("Press Enter to exit...")
                 exit(-1)
             else:
                 print("Trying again...")
                 continue
-        try:
-            sleep(60)
-            print("Closing browser in a minute.. (Press CTRL + C to close now)")
-        except KeyboardInterrupt as e:
-            tools.pressAnyKeyToContinue()
-            chrome.close()
-            chrome.close()
-            chrome.quit()
-            exit(0)
         else:
-            chrome.close()
-            chrome.close()
-            chrome.quit()
+            print("Process completed...\n")
+            input("Press Enter to exit...")
