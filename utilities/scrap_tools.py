@@ -204,8 +204,11 @@ def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
     """
     start_time: float = time()
     while True:
-        # currentURL: str = chromeInstance.current_url # When url changes then it get stuck and new url not returned 
-        # Implementing javascript to fetch the current url (It may help to fix the stuck issue of selenium at this point)
+        # currentURL: str = chromeInstance.current_url # When url changes then it get stuck and new url not returned
+        # Implementing javascript to fetch the current url (It may help to fix the stuck issue of selenium at this point) (Not fixed by it)
+        # Issue appears sometimes only and only when URL changes. Means stuck when url changes.
+        # The issue is also because the page is loaded using request (uses react), not html based.
+        waitUntilElementBecomeVisible(chromeInstance, ("tag name", "body"))
         currentURL: str = chromeInstance.execute_script("return window.location.host;")
         # print("Current URL:", currentURL)
         if expectedURLFragment in currentURL:
