@@ -50,19 +50,6 @@ if not settings:
 # Creating app required directories
 tools.createAppRequiredDirectories(settings["app"]["required_directories"])
 
-# Adding chrome options based on user settings
-chromeOptions: Options = Options()
-if not settings["chrome"]["display_images"]:
-    chromeOptions.add_argument("--blink-settings=imagesEnabled=false")
-if settings["chrome"]["headless"]:
-    chromeOptions.add_argument("--headless")
-
-# Services
-service = Service(
-    executable_path=settings["chromedriver"]["executable_path"],
-    port=settings["chromedriver"]["port"],
-)
-
 # Fetching URLs from settings
 microsoftUrl: str = settings["url"]["microsoft"]
 outlookUrl: str = settings["url"]["outlook"]
@@ -210,6 +197,21 @@ def main() -> None:
     index = 0
 
     while True:
+        # Options and services must be initialized for each browser session because when you quit a browser then these objects are also destroyed.
+
+        # Adding chrome options based on user settings
+        chromeOptions: Options = Options()
+        if not settings["chrome"]["display_images"]:
+            chromeOptions.add_argument("--blink-settings=imagesEnabled=false")
+        if settings["chrome"]["headless"]:
+            chromeOptions.add_argument("--headless")
+
+        # Services
+        service = Service(
+            executable_path=settings["chromedriver"]["executable_path"],
+            port=settings["chromedriver"]["port"],
+        )
+
         # New browser session (Because clear cookies is not working for microsoft)
         # Initializing the chrome webdriver
         print("\nInitializing a new browser session...")
