@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 30th Nov 2023
+    @last-modified: 21st Jan 2024
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -272,10 +272,13 @@ def main() -> None:
             # Writing OTP to magzter tab
             scrap_tools.switchTab(chrome, Tab.Magzter)
             mg.writeOTP(otp)
+            sleep(1)  # sleep for 1 second
 
             # status: bool | None = mg.isOTPSuccessfullySubmitted(maxWaitTimeForURLChange=5) # Time consuming.
-            status: bool | None = mg.isOTPSuccessfullySubmitted_2()
-            print("Returned from isOTPSuccessfullySubmitted_2")
+            # status: bool | None = mg.isOTPSuccessfullySubmitted_2()
+            status: bool | None = mg.isOTPSuccessfullySubmitted_3()  # 3rd way to prevent selenium stuck
+            # status: bool | None = mg.isOTPSuccessfullySubmitted_4() # 4th way to prevent selenium stuck
+            print("Returned from isOTPSuccessfullySubmitted_3")
             print("status:", status)
 
             if status:
@@ -290,7 +293,7 @@ def main() -> None:
                 # Some other error. So, switch the control to user.
                 otpByUser = input("Write OTP: ")
                 # Writing OTP to magzter tab
-                mg.writeOTP(otp)
+                mg.writeOTP(otpByUser)
                 break
 
         # TODO -> Fetching and writing card information
@@ -299,6 +302,7 @@ def main() -> None:
         cardExpiry: str = rowData[headersWithIndex["card_expiry"]]
         cardCvv: str = rowData[headersWithIndex["card_cvv"]]
         cardholderName: str = rowData[headersWithIndex["cardholder_name"]]
+        # sleep(3)
         mg.writeCardInformation(carNumber, cardExpiry, cardCvv, cardholderName)
 
         print("\n")
