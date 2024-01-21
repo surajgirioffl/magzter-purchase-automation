@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 30th Nov 2023
+    @last-modified: Dec 2023
     @error-series: 2400
     @description:
         * Module to perform any operations related to magzter for the project.
@@ -12,10 +12,15 @@
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 
+from time import sleep
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from pyautogui import write, press
+from utilities import scrap_tools
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from utilities import scrap_tools
 
 
@@ -258,6 +263,213 @@ class Magzter:
                 print("Checkout page found")
                 return True
 
+    def isOTPSuccessfullySubmitted_3(self) -> bool | None:
+        # actually, Driver stuck only when OTP is successfully submitted.
+        while True:
+            # title = self.chrome.title.strip()
+            # 'Sign in to your Magzter account' is title on login page
+            # Stuck at below line when OTP is successfully submitted and page switched
+            title = self.chrome.execute_script("return document.title;")
+            print(title)
+
+            if "Sign" in title:
+                print("sign...")
+                # Checking for error message.
+                try:
+                    print("finding error para")
+                    errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                    print("found error para")
+                except NoSuchElementException as e:
+                    print("no error para found")
+                    continue
+                else:
+                    errorText: str = errorPara.text
+                    print(f"OTP submission error: {errorText}. Error Code: 2405")
+                    if errorText.strip() == "Authentication failure":
+                        # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                        # So, None will indicate to retry to fetch OTP from the outlook.
+                        return None
+                    return False
+            elif title == "Magzter Inc":
+                # Title on check out page
+                print("HIi")
+                # scrap_tools.waitUntilElementBecomeVisible(By.TAG_NAME, "body")
+                # print("bye")
+                return True
+            else:
+                print("ye kya hua")
+                # Black page or something else (or redirecting)
+                continue
+
+    def isOTPSuccessfullySubmitted_4(self) -> bool | None:
+        while True:
+            try:
+                # Checking for existence of an element on the login page.
+                # If element exists means page is not switched yet. So, check for error message.
+                # self.chrome.find_element(By.ID, "k_magzter")
+                # Above is not working
+
+                # Checking element of checkout page. If found then page switched.
+                self.chrome.find_element(By.ID, "cardNumber")
+            except NoSuchElementException as e:
+                # Checking for error message.
+                try:
+                    errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                except NoSuchElementException as e:
+                    print("no error para found")
+                    continue
+                else:
+                    errorText: str = errorPara.text
+                    print(f"OTP submission error: {errorText}. Error Code: 2405")
+                    if errorText.strip() == "Authentication failure":
+                        # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                        # So, None will indicate to retry to fetch OTP from the outlook.
+                        return None
+                    return False
+            else:
+                return True
+
+    def isOTPSuccessfullySubmitted_5(self):
+        # Checking for error message.
+        while True:
+            try:
+                print("finding error para")
+                errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                # Stuck at above line when element not found (during page switching (not loaded))
+                print("Just below finding error para")
+            except NoSuchElementException as e:
+                print("no error para found")
+
+                print("checking for page href..")
+                href = self.chrome.execute_script("return window.location.href;")
+                print("href:", href)
+                if "checkout" in href:
+                    print("time out for checking url change")
+                    return True
+                else:
+                    print("Page not changed")
+
+                continue
+            else:
+                errorText: str = errorPara.text
+                print(f"OTP submission error: {errorText}. Error Code: 2405")
+                if errorText.strip() == "Authentication failure":
+                    # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                    # So, None will indicate to retry to fetch OTP from the outlook.
+                    return None
+                return False
+
+    def isOTPSuccessfullySubmitted_6(self):
+        # Checking for error message.
+        while True:
+            try:
+                print("checking for body")
+                wait = WebDriverWait(self.chrome, 10)
+                wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, "body")))
+                print("checking for k_magzter")
+                self.chrome.find_element(By.ID, "k_magzter")
+                # Stuck at above line when element not found (during page switching (not loaded))
+                # if k_magzter found means current page is login page
+            except NoSuchElementException as e:
+                # No login page
+                print("no login page")
+                return True
+            else:
+                # Checking for error message.
+                try:
+                    print("finding error para")
+                    errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                    print("found error para")
+                except NoSuchElementException as e:
+                    print("no error para found")
+                    continue
+                else:
+                    errorText: str = errorPara.text
+                    print(f"OTP submission error: {errorText}. Error Code: 2405")
+                    if errorText.strip() == "Authentication failure":
+                        # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                        # So, None will indicate to retry to fetch OTP from the outlook.
+                        return None
+                    return False
+
+    def isOTPSuccessfullySubmitted_7(self):
+        # (By.ID, "k_magzter") - found on login page
+        # (By.ID, "cardNumber") - found on checkout page
+        # Don't count loading time, because during loading control auto stop at its current point until the loading completed. Then only, next statements will executed.
+        # So, issue is when page loaded but no element are loaded (because of use of react)
+        wait = WebDriverWait(self.chrome, 2)
+        while True:
+            print("\n==========ITERATION=================")
+            print(self.chrome.current_url)
+            try:
+                wait.until(EC.presence_of_element_located((By.ID, "k_magzter")))
+            except TimeoutException:
+                # if not login page found
+                print("login page not found")
+                try:
+                    wait.until(EC.presence_of_element_located((By.ID, "cardNumber")))
+                except TimeoutException:
+                    print("card element not found")
+                    continue
+                else:
+                    print("card element found")
+                    return True
+            else:
+                # found
+                print("login page found")
+                try:
+                    print("finding error para")
+                    # Stuck at this point when OTP is successfully submitted and page switched
+                    # self.chrome.find
+                    errorPara: WebElement = self.chrome.find_element(By.CSS_SELECTOR, ".magazinename")
+                    print("found error para")
+                except NoSuchElementException as e:
+                    print("no error para found")
+                    continue
+                else:
+                    errorText: str = errorPara.text
+                    print(f"OTP submission error: {errorText}. Error Code: 2405")
+                    if errorText.strip() == "Authentication failure":
+                        # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                        # So, None will indicate to retry to fetch OTP from the outlook.
+                        return None
+                    return False
+
+    def isOTPSuccessfullySubmitted_8(self):
+        # (By.ID, "k_magzter") - found on login page
+        # (By.ID, "cardNumber") - found on checkout page
+        # Don't count loading time, because during loading control auto stop at its current point until the loading completed. Then only, next statements will executed.
+        # So, issue is when page loaded but no element are loaded (because of use of react)
+        wait = WebDriverWait(self.chrome, 2)
+        while True:
+            print("\n==========ITERATION=================")
+            print(self.chrome.current_url)
+            try:
+                self.chrome.find_element(By.ID, "cardNumber")
+            except Exception as e:
+                self.chrome.find_element(By.ID, "k_magzter")
+                print("login page found")
+                try:
+                    print("finding error para")
+                    # Stuck at this point when OTP is successfully submitted and page switched
+                    # self.chrome.find
+                    errorPara: WebElement = self.chrome.find_element(By.CSS_SELECTOR, ".magazinename")
+                    print("found error para")
+                except NoSuchElementException as e:
+                    print("no error para found")
+                    continue
+                else:
+                    errorText: str = errorPara.text
+                    print(f"OTP submission error: {errorText}. Error Code: 2405")
+                    if errorText.strip() == "Authentication failure":
+                        # Returns None if OTP is not successfully submitted due to invalid (wrong) OTP.
+                        # So, None will indicate to retry to fetch OTP from the outlook.
+                        return None
+                    return False
+            else:
+                print("login page not found")
+                return True
+
     def writeCardInformation(self, cardNumber: str, cardExpiry: str, cvc: str, cardholderName: str) -> None:
         """
         Description:
@@ -294,3 +506,49 @@ class Magzter:
 
         # pay button (div) class name: 'SubmitButton-IconContainer'
         self.chrome.find_element(By.CLASS_NAME, "SubmitButton-IconContainer").click()
+
+    def writeCardInformationLikeHuman(
+        self,
+        cardNumber: str,
+        cardExpiry: str,
+        cvc: str,
+        cardholderName: str,
+        sleepTimeOnEachEntry: float | int = 0,
+    ) -> None:
+        """
+        Description:
+            - Method to writes the card information to the corresponding input boxes on the checkout page of Magzter and proceed.
+                - Checkout page's URL is like https://checkout.stripe.com/c/pay/....
+
+        Args:
+            * cardNumber (str):
+                - The card number to be entered.
+            * cardExpiry (str):
+                - The card expiry date to be entered.
+            * cvc (str):
+                - The cvc number to be entered.
+            * cardholderName (str):
+                - The name of the cardholder to be entered.
+
+        Returns:
+            * None
+        """
+        press("tab", 3)
+        sleep(sleepTimeOnEachEntry)
+        write(cardNumber)
+        sleep(sleepTimeOnEachEntry)
+        press("tab")
+        sleep(sleepTimeOnEachEntry)
+        write(cardExpiry)
+        sleep(sleepTimeOnEachEntry)
+        press("tab")
+        sleep(sleepTimeOnEachEntry)
+        write(cvc)
+        sleep(sleepTimeOnEachEntry)
+        press("tab")
+        sleep(sleepTimeOnEachEntry)
+        write(cardholderName)
+        sleep(sleepTimeOnEachEntry)
+        press("tab", 3)
+        sleep(sleepTimeOnEachEntry)
+        press("enter")
