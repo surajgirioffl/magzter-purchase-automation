@@ -30,7 +30,6 @@ from typing import Literal, Any
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from components import ip, google_sheets, microsoft, magzter
 from utilities import tools, scrap_tools
@@ -184,6 +183,59 @@ def getUniqueIPAddress(spreadsheetDb: spreadsheet_db.Spreadsheet) -> str:
         tools.pressAnyKeyToContinue("\nPress any key to continue to check again.")
 
 
+class NewDriverInstance:
+    @staticmethod
+    def getNewChromeInstance():
+        # Options and services must be initialized for each browser session because when you quit a browser then these objects are also destroyed.
+        # Adding chrome options based on user settings
+        chromeOptions = webdriver.chrome.options.Options()
+        if not settings["browser"]["display_images"]:
+            chromeOptions.add_argument("--blink-settings=imagesEnabled=false")
+        if settings["browser"]["headless"]:
+            chromeOptions.add_argument("--headless")
+
+        # Services
+        service = Service(
+            executable_path=settings["webdriver"]["executable_path"],
+            port=settings["webdriver"]["port"],
+        )
+        return webdriver.Chrome(options=chromeOptions, service=service)
+
+    @staticmethod
+    def getNewEdgeInstance():
+        # Options and services must be initialized for each browser session because when you quit a browser then these objects are also destroyed.
+        # Adding edge options based on user settings
+        edgeOptions = webdriver.edge.options.Options()
+        if not settings["browser"]["display_images"]:
+            edgeOptions.add_argument("--blink-settings=imagesEnabled=false")
+        if settings["browser"]["headless"]:
+            edgeOptions.add_argument("--headless")
+
+        # Services
+        service = Service(
+            executable_path=settings["webdriver"]["executable_path"],
+            port=settings["webdriver"]["port"],
+        )
+        return webdriver.Edge(options=edgeOptions, service=service)
+
+    @staticmethod
+    def getNewFirefoxInstance():
+        # Options and services must be initialized for each browser session because when you quit a browser then these objects are also destroyed.
+        # Adding firefox options based on user settings
+        firefoxOptions = webdriver.firefox.options.Options()
+        if not settings["browser"]["display_images"]:
+            firefoxOptions.set_preference("permissions.default.image", 2)
+        if settings["browser"]["headless"]:
+            firefoxOptions.add_argument("--headless")
+
+        # Services
+        service = Service(
+            executable_path=settings["webdriver"]["executable_path"],
+            port=settings["webdriver"]["port"],
+        )
+        return webdriver.Firefox(options=firefoxOptions, service=service)
+
+
 def main() -> None:
     # *********************************Scraping Objects & Variables*********************************
     spreadSheetName, sheetName, gs = performInitialSpreadsheetOperations()  # gs is a GoogleSheets object
@@ -203,24 +255,11 @@ def main() -> None:
 
     while True:
         # Options and services must be initialized for each browser session because when you quit a browser then these objects are also destroyed.
-
-        # Adding chrome options based on user settings
-        chromeOptions: Options = Options()
-        if not settings["chrome"]["display_images"]:
-            chromeOptions.add_argument("--blink-settings=imagesEnabled=false")
-        if settings["chrome"]["headless"]:
-            chromeOptions.add_argument("--headless")
-
-        # Services
-        service = Service(
-            executable_path=settings["chromedriver"]["executable_path"],
-            port=settings["chromedriver"]["port"],
-        )
-
         # New browser session (Because clear cookies is not working for microsoft)
         # Initializing the chrome webdriver
         print("\nInitializing a new browser session...")
-        chrome: webdriver.Chrome = webdriver.Chrome(options=chromeOptions, service=service)
+        chrome: webdriver.Chrome = NewDriverInstance.getNewChromeInstance()
+        print("Browser session initialized successfully...")
 
         # Initializing the objects of Microsoft and Magzter
         ms: microsoft.Microsoft = microsoft.Microsoft(chrome)
