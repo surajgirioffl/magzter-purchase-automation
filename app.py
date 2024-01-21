@@ -258,12 +258,12 @@ def main() -> None:
         # New browser session (Because clear cookies is not working for microsoft)
         # Initializing the chrome webdriver
         print("\nInitializing a new browser session...")
-        chrome: webdriver.Chrome = NewDriverInstance.getNewChromeInstance()
+        driver: webdriver.Firefox = NewDriverInstance.getNewFirefoxInstance()
         print("Browser session initialized successfully...")
 
         # Initializing the objects of Microsoft and Magzter
-        ms: microsoft.Microsoft = microsoft.Microsoft(chrome)
-        mg: magzter.Magzter = magzter.Magzter(chrome)
+        ms: microsoft.Microsoft = microsoft.Microsoft(driver)
+        mg: magzter.Magzter = magzter.Magzter(driver)
 
         print(f"\n\n======================== FOR ROW NUMBER {rowNumber} ========================")
         # TODO -> Checking IP
@@ -289,16 +289,16 @@ def main() -> None:
         print("Login to Microsoft and open Outlook...")
         email: str = rowData[headersWithIndex["microsoft_email"]]
         password: str = rowData[headersWithIndex["password"]]
-        scrap_tools.switchTab(chrome, Tab.Microsoft)
+        scrap_tools.switchTab(driver, Tab.Microsoft)
         ms.login(microsoftUrl, email, password)
         ms.openOutlook(outlookUrl)
 
         # TODO -> Login to Magzter till send OTP
         # Opening new tab for Magzter
-        scrap_tools.openNewTab(chrome)
+        scrap_tools.openNewTab(driver)
         # Magzter in tab index 1
         print("Login to Magzter and send OTP...")
-        scrap_tools.switchTab(chrome, Tab.Magzter)
+        scrap_tools.switchTab(driver, Tab.Magzter)
         mg.login(magzterUrl, email)  # OTP sent
 
         # TODO -> Fetching and writing OTP
@@ -306,7 +306,7 @@ def main() -> None:
         while True:
             print("-- Fetching and Writing OTP")
             # Fetching OTP from microsoft tab
-            scrap_tools.switchTab(chrome, Tab.Microsoft)
+            scrap_tools.switchTab(driver, Tab.Microsoft)
             otp: str = ms.fetchOTP()
             print("otp: ", otp)
             if not otp.strip():
@@ -314,7 +314,7 @@ def main() -> None:
                 continue
 
             # Writing OTP to magzter tab
-            scrap_tools.switchTab(chrome, Tab.Magzter)
+            scrap_tools.switchTab(driver, Tab.Magzter)
             mg.writeOTP(otp)
             sleep(1)  # sleep for 1 second
 
@@ -378,8 +378,8 @@ def main() -> None:
         # Closing the browser
         print("Closing the browser..")
         # Ensure that chrome.quit() is called regardless of what happens.
-        if "chrome" in locals() and hasattr(chrome, "quit"):
-            chrome.quit()
+        if "chrome" in locals() and hasattr(driver, "quit"):
+            driver.quit()
 
 
 if __name__ == "__main__":
