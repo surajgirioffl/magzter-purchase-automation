@@ -12,7 +12,6 @@
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 
-from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from utilities import scrap_tools
@@ -24,19 +23,19 @@ class Microsoft:
         - Class to perform operations related to Microsoft for the project.
     """
 
-    def __init__(self, chromeInstance: Chrome) -> None:
+    def __init__(self, driverInstance) -> None:
         """
         Description:
             - Initializes a new instance of the class.
 
         Args:
-            * chromeInstance (Chrome):
-                - An instance of the Chrome (selenium.webdriver.Chrome).
+            * driverInstance (Chrome | Edge | Firefox):
+                - An instance of the webdriver (selenium.webdriver.Chrome or any other).
 
         Returns:
             * None
         """
-        self.chrome = chromeInstance
+        self.driver = driverInstance
 
     def __del__(self):
         """
@@ -61,29 +60,27 @@ class Microsoft:
             * None
         """
         # Loading new page
-        self.chrome.get(url)
+        self.driver.get(url)
 
         # Input of email
-        # self.chrome.find_element(By.ID, "i0116").send_keys(email)
-        emailInputElement: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
-            self.chrome, (By.ID, "i0116")
-        )
+        # self.driver.find_element(By.ID, "i0116").send_keys(email)
+        emailInputElement: WebElement = scrap_tools.waitUntilElementLoadedInDOM(self.driver, (By.ID, "i0116"))
         emailInputElement.send_keys(email)
-        self.chrome.find_element(By.ID, "idSIButton9").click()  # Clicking on next
+        self.driver.find_element(By.ID, "idSIButton9").click()  # Clicking on next
 
         # DOM is same and elements are present but focus page content changed. So, no need to use wait-until-load concept because already loaded.
         # Input of password
-        # self.chrome.find_element(By.ID, "i0118").send_keys(password)
+        # self.driver.find_element(By.ID, "i0118").send_keys(password)
         passwordInputElement: WebElement = scrap_tools.waitUntilElementBecomeVisible(
-            self.chrome, (By.ID, "i0118")
+            self.driver, (By.ID, "i0118")
         )
         passwordInputElement.send_keys(password)
-        self.chrome.find_element(By.ID, "idSIButton9").click()  # clicking on next
+        self.driver.find_element(By.ID, "idSIButton9").click()  # clicking on next
 
     def openOutlook(self, url: str = "https://outlook.live.com/mail/0/") -> None:
         """
         Description:
-            - Method to open the Outlook(mail) page in the chrome instance.
+            - Method to open the Outlook(mail) page in the webdriver instance.
             - Must be called after login using Microsoft.login() method otherwise exception will be thrown.
 
         Args:
@@ -94,20 +91,18 @@ class Microsoft:
         Returns:
             * None
         """
-        self.chrome.get(url)
+        self.driver.get(url)
 
         # A microsoft page open, having option to sign-in (We have already signed-in using login method. So, session is already there).
         # We just need to click on 'Sign in'
 
         # It opens a new tab for outlook because of target = _blank. We have update it using Javascript.
-        # self.chrome.find_element(By.CSS_SELECTOR, 'a[data-bi-cn="SignIn"]')
+        # self.driver.find_element(By.CSS_SELECTOR, 'a[data-bi-cn="SignIn"]')
         signInButton: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
-            self.chrome, (By.CSS_SELECTOR, 'a[data-bi-cn="SignIn"]')
+            self.driver, (By.CSS_SELECTOR, 'a[data-bi-cn="SignIn"]')
         )
         # Changing target attribute value to '' using javascript. So, that outlook will open in same tab.
-        self.chrome.execute_script(
-            """document.querySelector('a[data-bi-cn="SignIn"]').target='';"""
-        )
+        self.driver.execute_script("""document.querySelector('a[data-bi-cn="SignIn"]').target='';""")
         signInButton.click()
 
     def fetchOTP(self) -> str:
@@ -128,10 +123,8 @@ class Microsoft:
                 - If no OTP is found or any issue occurs, it will return an empty string ('').
 
         """
-        # mailsContainer = self.chrome.find_element(By.ID, "MailList")
-        mailsContainer: WebElement = scrap_tools.waitUntilElementLoadedInDOM(
-            self.chrome, (By.ID, "MailList")
-        )
+        # mailsContainer = self.driver.find_element(By.ID, "MailList")
+        mailsContainer: WebElement = scrap_tools.waitUntilElementLoadedInDOM(self.driver, (By.ID, "MailList"))
         mailsListInString: str = mailsContainer.text  # similar as JS, <element>.innerText
         mailsList: list[str] = mailsListInString.split("\n")
         mailWithOTP: str = ""
