@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 26th Nov 2023
+    @last-modified: 21st Jan 2024
     @error-series: 2300
     @description:
         * Module to perform any operations related to Microsoft for the project.
@@ -15,6 +15,7 @@ __email__ = "surajgirioffl@gmail.com"
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from utilities import scrap_tools
+from selenium.webdriver import Chrome, Edge, Firefox
 
 
 class Microsoft:
@@ -23,7 +24,7 @@ class Microsoft:
         - Class to perform operations related to Microsoft for the project.
     """
 
-    def __init__(self, driverInstance) -> None:
+    def __init__(self, driverInstance: Chrome | Edge | Firefox) -> None:
         """
         Description:
             - Initializes a new instance of the class.

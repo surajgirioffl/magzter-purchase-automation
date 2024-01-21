@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 25th Nov 2023
     @completed-on: N/A
-    @last-modified: 30th Nov 2023
+    @last-modified: 21st Jan 2024
     @error-series: 3200
     @description:
         * Module to provide specific tools requires while performing scraping.
@@ -16,15 +16,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome, Edge, Firefox
 
 
 def waitUntilElementLoadedInDOM(
-    chromeInstance: Chrome, elementLocator: tuple, maxWaitTime: int = 10
+    driverInstance: Chrome | Edge | Firefox, elementLocator: tuple, maxWaitTime: int = 10
 ) -> WebElement:
     """
     Description:
-        - Function to wait until an element is loaded in a Chrome instance.
+        - Function to wait until an element is loaded in a Driver Instance.
 
     Expectation:
         * presence_of_element_located
@@ -32,8 +32,8 @@ def waitUntilElementLoadedInDOM(
             - This does not necessarily mean that the element is visible.
 
     Args:
-        * chromeInstance (Chrome):
-            - The Chrome instance to wait on.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance to wait on.
         * elementLocator (tuple):
             - The locator of the element to wait for.
                 - Used to find the element returns the WebElement once it is located
@@ -54,17 +54,17 @@ def waitUntilElementLoadedInDOM(
             - If the element is not found.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     element: WebElement = wait.until(expected_conditions.presence_of_element_located(elementLocator))
     return element
 
 
 def waitUntilElementBecomeVisible(
-    chromeInstance: Chrome, elementLocator: tuple, maxWaitTime: int = 10
+    driverInstance: Chrome | Edge | Firefox, elementLocator: tuple, maxWaitTime: int = 10
 ) -> WebElement:
     """
     Description:
-        - Function to wait until an element is visible in a Chrome instance.
+        - Function to wait until an element is visible in a Driver Instance.
 
     Expectation:
         * visibility_of_element_located
@@ -72,8 +72,8 @@ def waitUntilElementBecomeVisible(
             - Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
 
     Args:
-        * chromeInstance (Chrome):
-            - The Chrome instance to wait on.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance to wait on.
         * elementLocator (tuple):
             - The locator of the element to wait for.
                 - Used to find the element returns the WebElement once it is located and visible
@@ -94,17 +94,17 @@ def waitUntilElementBecomeVisible(
             - If the element is not found.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     element: WebElement = wait.until(expected_conditions.visibility_of_element_located(elementLocator))
     return element
 
 
 def waitUntilElementBecomeClickable(
-    chromeInstance: Chrome, elementLocator: tuple, maxWaitTime: int = 10
+    driverInstance: Chrome | Edge | Firefox, elementLocator: tuple, maxWaitTime: int = 10
 ) -> WebElement:
     """
     Description:
-        - Function to wait until an element is visible and clickable in a Chrome instance.
+        - Function to wait until an element is visible and clickable in a Driver Instance.
 
     Expectation:
         * element_to_be_clickable
@@ -112,8 +112,8 @@ def waitUntilElementBecomeClickable(
             - Element is either a locator (text) or an WebElement.
 
     Args:
-        * chromeInstance (Chrome):
-            - The Chrome instance to wait on.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance to wait on.
         * elementLocator (tuple):
             - The locator of the element to wait for.
                 - Used to find the element returns the WebElement once it is located and clickable.
@@ -134,13 +134,13 @@ def waitUntilElementBecomeClickable(
             - If the element is not found.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     element: WebElement = wait.until(expected_conditions.element_to_be_clickable(elementLocator))
     return element
 
 
 def waitUntilCurrentURLContainsExpectedURLFragment(
-    chromeInstance: Chrome, expectedURLFragment: str, maxWaitTime: int = 5
+    driverInstance: Chrome | Edge | Firefox, expectedURLFragment: str, maxWaitTime: int = 5
 ) -> bool:
     """
     Description:
@@ -151,8 +151,8 @@ def waitUntilCurrentURLContainsExpectedURLFragment(
         - An expectation for checking that the current url contains a case- sensitive substring.
 
     Args:
-        * chromeInstance (Chrome):
-            - The Chrome instance to use for waiting.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance to use for waiting.
         * expectedURLFragment (str):
             - The URL fragment(part) that is expected to be present in the current URL.
         * maxWaitTime (int, optional):
@@ -164,12 +164,12 @@ def waitUntilCurrentURLContainsExpectedURLFragment(
             - True if the URL contains the expected fragment within the maximum wait time, False otherwise.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     return wait.until(expected_conditions.url_contains(expectedURLFragment))
 
 
 def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
-    chromeInstance: Chrome,
+    driverInstance: Chrome | Edge | Firefox,
     expectedURLFragment: str,
     maxWaitTime: int = 5,
     waitIfURLNotAvailable: bool = True,
@@ -181,8 +181,8 @@ def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
         - Manual way, no WebDriverWait of selenium will use in this function
 
     Args:
-        * chromeInstance (Chrome):
-            - The Chrome instance.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance.
         * expectedURLFragment (str):
             - The expected URL fragment.
         * maxWaitTime (int, optional):
@@ -204,12 +204,12 @@ def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
     """
     start_time: float = time()
     while True:
-        # currentURL: str = chromeInstance.current_url # When url changes then it get stuck and new url not returned
+        # currentURL: str = driverInstance.current_url # When url changes then it get stuck and new url not returned
         # Implementing javascript to fetch the current url (It may help to fix the stuck issue of selenium at this point) (Not fixed by it)
         # Issue appears sometimes only and only when URL changes. Means stuck when url changes.
         # The issue is also because the page is loaded using request (uses react), not html based.
-        waitUntilElementBecomeVisible(chromeInstance, ("tag name", "body"))
-        currentURL: str = chromeInstance.execute_script("return window.location.host;")
+        waitUntilElementBecomeVisible(driverInstance, ("tag name", "body"))
+        currentURL: str = driverInstance.execute_script("return window.location.host;")
         # print("Current URL:", currentURL)
         if expectedURLFragment in currentURL:
             return True
@@ -223,7 +223,7 @@ def waitUntilCurrentURLContainsExpectedURLFragment_Manual(
 
 
 def waitUntilCurrentURLExactMatchToExpectedURL(
-    chromeInstance: Chrome, expectedURL: str, maxWaitTime: int = 5
+    driverInstance: Chrome | Edge | Firefox, expectedURL: str, maxWaitTime: int = 5
 ) -> bool:
     """
     Description:
@@ -234,7 +234,7 @@ def waitUntilCurrentURLExactMatchToExpectedURL(
         - An expectation for checking the current url.
 
     Args:
-        * chromeInstance (Chrome):
+        * driverInstance (Chrome | Edge | Firefox):
             - The instance of the Chrome browser.
         * expectedURL (str):
             - The URL that is expected to be matched.
@@ -247,12 +247,12 @@ def waitUntilCurrentURLExactMatchToExpectedURL(
             - True if the current URL matches the expected URL within the maximum wait time, False otherwise.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     return wait.until(expected_conditions.url_to_be(expectedURL))
 
 
 def waitUntilCurrentURLMatchToExpectedURLRegexPattern(
-    chromeInstance: Chrome, expectedURLRegexPattern: str, maxWaitTime: int = 5
+    driverInstance: Chrome | Edge | Firefox, expectedURLRegexPattern: str, maxWaitTime: int = 5
 ) -> bool:
     """
     Description:
@@ -263,7 +263,7 @@ def waitUntilCurrentURLMatchToExpectedURLRegexPattern(
         - An expectation for checking the current url.
 
     Args:
-        * chromeInstance (Chrome):
+        * driverInstance (Chrome | Edge | Firefox):
             -The instance of the Chrome browser.
         * expectedURLRegexPattern (str):
             - The regex pattern that the current URL should match.
@@ -277,12 +277,12 @@ def waitUntilCurrentURLMatchToExpectedURLRegexPattern(
             - True if the current URL matches the expected URL regex pattern, False otherwise.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     return wait.until(expected_conditions.url_matches(expectedURLRegexPattern))
 
 
 def waitUntilCurrentURLDifferentFromExpectedURL(
-    chromeInstance: Chrome, expectedURL: str, maxWaitTime: int = 5
+    driverInstance: Chrome | Edge | Firefox, expectedURL: str, maxWaitTime: int = 5
 ) -> bool:
     """
     Description:
@@ -295,7 +295,7 @@ def waitUntilCurrentURLDifferentFromExpectedURL(
         - An expectation for checking the current url.
 
     Args:
-        * chromeInstance (Chrome):
+        * driverInstance (Chrome | Edge | Firefox):
             - The instance of the Chrome browser.
         * expectedURL (str):
             - The expected URL.
@@ -308,33 +308,33 @@ def waitUntilCurrentURLDifferentFromExpectedURL(
             - True if the current URL is different from the expected URL within the maximum wait time, False otherwise.
     """
     # Set a maximum wait time (in seconds)
-    wait = WebDriverWait(chromeInstance, maxWaitTime)
+    wait = WebDriverWait(driverInstance, maxWaitTime)
     return wait.until(expected_conditions.url_changes(expectedURL))
 
 
-def openNewTab(chromeInstance: Chrome) -> None:
+def openNewTab(driverInstance: Chrome | Edge | Firefox) -> None:
     """
     Description:
-        - Function to open a new tab in the specified Chrome instance.
+        - Function to open a new tab in the specified Driver Instance.
 
     Args:
-        * chromeInstance (Chrome):
-            - The Chrome instance to open the new tab in.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance to open the new tab in.
 
     Returns:
         * None
     """
-    chromeInstance.execute_script("window.open('','_blank');")
+    driverInstance.execute_script("window.open('','_blank');")
 
 
-def switchTab(chromeInstance: Chrome, tabIndex: int) -> None:
+def switchTab(driverInstance: Chrome | Edge | Firefox, tabIndex: int) -> None:
     """
     Description:
-        - Function to switch the active tab of a Chrome instance to the tab at the specified index.
+        - Function to switch the active tab of a Driver Instance to the tab at the specified index.
 
     Parameters:
-        * chromeInstance (Chrome):
-            - The Chrome instance.
+        * driverInstance (Chrome | Edge | Firefox):
+            - The Driver Instance.
         * tabIndex (int):
             - The index of the tab to switch to.
             - Index always starts from 0.
@@ -343,4 +343,4 @@ def switchTab(chromeInstance: Chrome, tabIndex: int) -> None:
     Returns:
         None
     """
-    chromeInstance._switch_to.window(chromeInstance.window_handles[tabIndex])
+    driverInstance._switch_to.window(driverInstance.window_handles[tabIndex])

@@ -21,6 +21,7 @@ from utilities import scrap_tools
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utilities import scrap_tools
+from selenium.webdriver import Chrome, Edge, Firefox
 
 
 class Magzter:
@@ -29,13 +30,13 @@ class Magzter:
         - Class to perform operations related to Magzter for the project.
     """
 
-    def __init__(self, driverInstance) -> None:
+    def __init__(self, driverInstance: Chrome | Edge | Firefox) -> None:
         """
         Description:
             - Initializes a new instance of the class.
 
         Args:
-            * driverInstance (Chrome | Firefox | Edge):
+            * driverInstance (Chrome | Edge | Firefox):
                 - An instance of the any driver (selenium.webdriver.Chrome or any other).
 
         Returns:
