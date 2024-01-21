@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: Dec 2023
+    @last-modified: 21st Jan 2024
     @error-series: 2400
     @description:
         * Module to perform any operations related to magzter for the project.
@@ -13,7 +13,6 @@ __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 
 from time import sleep
-from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
@@ -30,19 +29,19 @@ class Magzter:
         - Class to perform operations related to Magzter for the project.
     """
 
-    def __init__(self, chromeInstance: Chrome) -> None:
+    def __init__(self, driverInstance) -> None:
         """
         Description:
             - Initializes a new instance of the class.
 
         Args:
-            * chromeInstance (Chrome):
-                - An instance of the Chrome (selenium.webdriver.Chrome).
+            * driverInstance (Chrome | Firefox | Edge):
+                - An instance of the any driver (selenium.webdriver.Chrome or any other).
 
         Returns:
             * None
         """
-        self.chrome = chromeInstance
+        self.driver = driverInstance
 
     def __del__(self):
         """
@@ -65,20 +64,20 @@ class Magzter:
             * None
         """
         # Loading new page
-        self.chrome.get(url)
+        self.driver.get(url)
 
         # 'Claim Now' button
-        # self.chrome.find_element(By.TAG_NAME, "button").click()
-        button: WebElement = scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.TAG_NAME, "button"))
+        # self.driver.find_element(By.TAG_NAME, "button").click()
+        button: WebElement = scrap_tools.waitUntilElementLoadedInDOM(self.driver, (By.TAG_NAME, "button"))
         button.click()
 
         # DOM is same and elements are present but focus page content changed. So, no need to use wait-until-load concept because already loaded.
         # Email input
         emailInputElement: WebElement = scrap_tools.waitUntilElementBecomeVisible(
-            self.chrome, (By.NAME, "word")
+            self.driver, (By.NAME, "word")
         )
         emailInputElement.send_keys(email)
-        self.chrome.find_element(By.CLASS_NAME, "login__loginBtnnp").click()
+        self.driver.find_element(By.CLASS_NAME, "login__loginBtnnp").click()
 
     def writeOTP(self, otp: str) -> None:
         """
@@ -94,19 +93,19 @@ class Magzter:
             * None
         """
         # Writing OTP (4 digits)
-        # self.chrome.find_element(By.ID, "otp1")
+        # self.driver.find_element(By.ID, "otp1")
 
         # first cell of OTP (digit 1)
-        scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.ID, "otp1")).send_keys(otp[0])
+        scrap_tools.waitUntilElementLoadedInDOM(self.driver, (By.ID, "otp1")).send_keys(otp[0])
         # 2nd cell of OTP (digit 2)
-        self.chrome.find_element(By.ID, "otp2").send_keys(otp[1])
+        self.driver.find_element(By.ID, "otp2").send_keys(otp[1])
         # 3rd cell of OTP (digit 3)
-        self.chrome.find_element(By.ID, "otp3").send_keys(otp[2])
+        self.driver.find_element(By.ID, "otp3").send_keys(otp[2])
         # 4th cell of OTP (digit 4)
-        self.chrome.find_element(By.ID, "otp4").send_keys(otp[3])
+        self.driver.find_element(By.ID, "otp4").send_keys(otp[3])
 
         # clicking on verify button
-        self.chrome.find_element(By.CLASS_NAME, "magzter__buttonText").click()
+        self.driver.find_element(By.CLASS_NAME, "magzter__buttonText").click()
 
     def resendOTP(self) -> bool:
         """
@@ -120,12 +119,12 @@ class Magzter:
         """
         # Magzter login page url is 'https://www.magzter.com/login/verify?from=&type=8'
 
-        if not "login" in self.chrome.current_url:
+        if not "login" in self.driver.current_url:
             return False
 
         # 'logn__socialicons__signuplinks' class (<span>) should be clicked to resend OTP.
         scrap_tools.waitUntilElementBecomeClickable(
-            self.chrome, (By.CLASS_NAME, "logn__socialicons__signuplinks")
+            self.driver, (By.CLASS_NAME, "logn__socialicons__signuplinks")
         ).click()
 
         return True
@@ -163,15 +162,15 @@ class Magzter:
         # * Solution 2 (Using changes in URL)
         # url during verification page (write otp page): https://www.magzter.com/login/verify?from=&type=8
         # On success it will redirect to one page and again auto redirect to checkout page: https://checkout.stripe.com/c/pay/cs_live_a1KRmUlrwPLqmy590zZjzQLi5CEO1UZQxRfo6DTWiwO46tMGPrmFdV8qeF#fidkdWxOYHwnPyd1blppbHNgWlIxSFR8Nl9gXXJQPWN8S3VSdnFPMVdmRCcpJ2hsYXYnP34nYnBsYSc%2FJ0tEJyknaHBsYSc%2FJ0tEJykndmxhJz8nS0QneCknZ2BxZHYnP15YKSdpZHxqcHFRfHVgJz8ndmxrYmlgWmxxYGgnKSd3YGNgd3dgd0p3bGJsayc%2FJ21xcXV2PyoqdWR8aGBrcStoZGJ%2FcWB3K2ZqaCd4JSUl
-        # urlBeforeClickOnVerify: str = self.chrome.current_url
-        # urlAfterClickOnVerify: str = self.chrome.current_url
+        # urlBeforeClickOnVerify: str = self.driver.current_url
+        # urlAfterClickOnVerify: str = self.driver.current_url
         # return urlBeforeClickOnVerify != urlAfterClickOnVerify
 
         # **** Solving using both solution****
         # Checking if URL changes then success.
         try:
             scrap_tools.waitUntilCurrentURLContainsExpectedURLFragment(
-                self.chrome, urlFragmentOfCheckoutPage, maxWaitTimeForURLChange
+                self.driver, urlFragmentOfCheckoutPage, maxWaitTimeForURLChange
             )
         except TimeoutException as e:
             print(
@@ -188,7 +187,7 @@ class Magzter:
             return True
 
         try:
-            errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+            errorPara: WebElement = self.driver.find_element(By.CLASS_NAME, "magazinename")
         except NoSuchElementException as e:
             return False
         else:
@@ -229,7 +228,7 @@ class Magzter:
         while True:
             # Checking for error message.
             try:
-                errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                errorPara: WebElement = self.driver.find_element(By.CLASS_NAME, "magazinename")
             except NoSuchElementException as e:
                 # print("no error para found")
                 pass
@@ -254,7 +253,7 @@ class Magzter:
 
             try:
                 scrap_tools.waitUntilCurrentURLContainsExpectedURLFragment_Manual(
-                    self.chrome, urlFragmentOfCheckoutPage, 0.5
+                    self.driver, urlFragmentOfCheckoutPage, 0.5
                 )
             except TimeoutException as e:
                 # print("URL not match. Time out")
@@ -266,10 +265,10 @@ class Magzter:
     def isOTPSuccessfullySubmitted_3(self) -> bool | None:
         # actually, Driver stuck only when OTP is successfully submitted.
         while True:
-            # title = self.chrome.title.strip()
+            # title = self.driver.title.strip()
             # 'Sign in to your Magzter account' is title on login page
             # Stuck at below line when OTP is successfully submitted and page switched
-            title = self.chrome.execute_script("return document.title;")
+            title = self.driver.execute_script("return document.title;")
             print(title)
 
             if "Sign" in title:
@@ -277,7 +276,7 @@ class Magzter:
                 # Checking for error message.
                 try:
                     print("finding error para")
-                    errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                    errorPara: WebElement = self.driver.find_element(By.CLASS_NAME, "magazinename")
                     print("found error para")
                 except NoSuchElementException as e:
                     print("no error para found")
@@ -306,15 +305,15 @@ class Magzter:
             try:
                 # Checking for existence of an element on the login page.
                 # If element exists means page is not switched yet. So, check for error message.
-                # self.chrome.find_element(By.ID, "k_magzter")
+                # self.driver.find_element(By.ID, "k_magzter")
                 # Above is not working
 
                 # Checking element of checkout page. If found then page switched.
-                self.chrome.find_element(By.ID, "cardNumber")
+                self.driver.find_element(By.ID, "cardNumber")
             except NoSuchElementException as e:
                 # Checking for error message.
                 try:
-                    errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                    errorPara: WebElement = self.driver.find_element(By.CLASS_NAME, "magazinename")
                 except NoSuchElementException as e:
                     print("no error para found")
                     continue
@@ -334,14 +333,14 @@ class Magzter:
         while True:
             try:
                 print("finding error para")
-                errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                errorPara: WebElement = self.driver.find_element(By.CLASS_NAME, "magazinename")
                 # Stuck at above line when element not found (during page switching (not loaded))
                 print("Just below finding error para")
             except NoSuchElementException as e:
                 print("no error para found")
 
                 print("checking for page href..")
-                href = self.chrome.execute_script("return window.location.href;")
+                href = self.driver.execute_script("return window.location.href;")
                 print("href:", href)
                 if "checkout" in href:
                     print("time out for checking url change")
@@ -364,10 +363,10 @@ class Magzter:
         while True:
             try:
                 print("checking for body")
-                wait = WebDriverWait(self.chrome, 10)
+                wait = WebDriverWait(self.driver, 10)
                 wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, "body")))
                 print("checking for k_magzter")
-                self.chrome.find_element(By.ID, "k_magzter")
+                self.driver.find_element(By.ID, "k_magzter")
                 # Stuck at above line when element not found (during page switching (not loaded))
                 # if k_magzter found means current page is login page
             except NoSuchElementException as e:
@@ -378,7 +377,7 @@ class Magzter:
                 # Checking for error message.
                 try:
                     print("finding error para")
-                    errorPara: WebElement = self.chrome.find_element(By.CLASS_NAME, "magazinename")
+                    errorPara: WebElement = self.driver.find_element(By.CLASS_NAME, "magazinename")
                     print("found error para")
                 except NoSuchElementException as e:
                     print("no error para found")
@@ -397,10 +396,10 @@ class Magzter:
         # (By.ID, "cardNumber") - found on checkout page
         # Don't count loading time, because during loading control auto stop at its current point until the loading completed. Then only, next statements will executed.
         # So, issue is when page loaded but no element are loaded (because of use of react)
-        wait = WebDriverWait(self.chrome, 2)
+        wait = WebDriverWait(self.driver, 2)
         while True:
             print("\n==========ITERATION=================")
-            print(self.chrome.current_url)
+            print(self.driver.current_url)
             try:
                 wait.until(EC.presence_of_element_located((By.ID, "k_magzter")))
             except TimeoutException:
@@ -420,8 +419,8 @@ class Magzter:
                 try:
                     print("finding error para")
                     # Stuck at this point when OTP is successfully submitted and page switched
-                    # self.chrome.find
-                    errorPara: WebElement = self.chrome.find_element(By.CSS_SELECTOR, ".magazinename")
+                    # self.driver.find
+                    errorPara: WebElement = self.driver.find_element(By.CSS_SELECTOR, ".magazinename")
                     print("found error para")
                 except NoSuchElementException as e:
                     print("no error para found")
@@ -440,20 +439,20 @@ class Magzter:
         # (By.ID, "cardNumber") - found on checkout page
         # Don't count loading time, because during loading control auto stop at its current point until the loading completed. Then only, next statements will executed.
         # So, issue is when page loaded but no element are loaded (because of use of react)
-        wait = WebDriverWait(self.chrome, 2)
+        wait = WebDriverWait(self.driver, 2)
         while True:
             print("\n==========ITERATION=================")
-            print(self.chrome.current_url)
+            print(self.driver.current_url)
             try:
-                self.chrome.find_element(By.ID, "cardNumber")
+                self.driver.find_element(By.ID, "cardNumber")
             except Exception as e:
-                self.chrome.find_element(By.ID, "k_magzter")
+                self.driver.find_element(By.ID, "k_magzter")
                 print("login page found")
                 try:
                     print("finding error para")
                     # Stuck at this point when OTP is successfully submitted and page switched
-                    # self.chrome.find
-                    errorPara: WebElement = self.chrome.find_element(By.CSS_SELECTOR, ".magazinename")
+                    # self.driver.find
+                    errorPara: WebElement = self.driver.find_element(By.CSS_SELECTOR, ".magazinename")
                     print("found error para")
                 except NoSuchElementException as e:
                     print("no error para found")
@@ -491,21 +490,21 @@ class Magzter:
         """
         # card number input box: id = 'cardNumber'
         # self.driver.find_element(By.ID, "cardNumber").send_keys(cardNumber)
-        scrap_tools.waitUntilElementLoadedInDOM(self.chrome, (By.ID, "cardNumber")).send_keys(cardNumber)
+        scrap_tools.waitUntilElementLoadedInDOM(self.driver, (By.ID, "cardNumber")).send_keys(cardNumber)
 
         # card expiry input box: id = 'cardExpiry'
-        self.chrome.find_element(By.ID, "cardExpiry").send_keys(cardExpiry)
+        self.driver.find_element(By.ID, "cardExpiry").send_keys(cardExpiry)
 
         # cvc input box: id = 'cardCvc'
-        self.chrome.find_element(By.ID, "cardCvc").send_keys(cvc)
+        self.driver.find_element(By.ID, "cardCvc").send_keys(cvc)
 
         # card holder name input box: id = 'billingName'
-        self.chrome.find_element(By.ID, "billingName").send_keys(cardholderName)
+        self.driver.find_element(By.ID, "billingName").send_keys(cardholderName)
 
         # country drop down: id = 'billingCountry' (default value is 'India') (No need to write)
 
         # pay button (div) class name: 'SubmitButton-IconContainer'
-        self.chrome.find_element(By.CLASS_NAME, "SubmitButton-IconContainer").click()
+        self.driver.find_element(By.CLASS_NAME, "SubmitButton-IconContainer").click()
 
     def writeCardInformationLikeHuman(
         self,
