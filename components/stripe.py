@@ -127,3 +127,21 @@ class Stripe:
         press("tab", 3)
         sleep(sleepTimeOnEachEntry)
         press("enter")
+
+    def isCorrectEmailOnPaymentPage(self, correctEmail: str) -> bool:
+        """
+        Description:
+            - This function checks if the email entered on the payment page matches the correct email.
+
+        Args:
+            * correctEmail (str):
+                - The correct email that should be on the payment page.
+
+        Returns:
+            * bool: True if the email on the payment page matches the correct email, False otherwise.
+        """
+        # "document.querySelector('.ReadOnlyFormField-title').innerText" give the readonly email from which the payment link belongs to.
+        emailOnPaymentPage: str = scrap_tools.waitUntilElementLoadedInDOM(
+            self.driver, (By.CSS_SELECTOR, ".ReadOnlyFormField-title")
+        ).text.strip()
+        return emailOnPaymentPage == correctEmail
