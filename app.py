@@ -31,6 +31,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
+import undetected_chromedriver as uc
 from components import ip, google_sheets, microsoft, magzter
 from utilities import tools, scrap_tools
 from db_scripts import spreadsheet_db
@@ -234,6 +235,23 @@ class NewDriverInstance:
             port=settings["webdriver"]["port"],
         )
         return webdriver.Firefox(options=firefoxOptions, service=service)
+
+
+class NewUndetectableDriverInstance:
+    @staticmethod
+    def getNewChromeInstance():
+        chromeOptions = webdriver.chrome.options.Options()
+        if not settings["browser"]["display_images"]:
+            chromeOptions.add_argument("--blink-settings=imagesEnabled=false")
+        if settings["browser"]["headless"]:
+            chromeOptions.add_argument("--headless")
+
+        # Services
+        service = Service(
+            executable_path=settings["webdriver"]["executable_path"],
+            port=settings["webdriver"]["port"],
+        )
+        return uc.Chrome(options=chromeOptions, service=service)
 
 
 def main() -> None:
