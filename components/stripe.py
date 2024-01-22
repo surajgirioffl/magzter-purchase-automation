@@ -160,13 +160,32 @@ class Stripe:
         Returns:
             * None
         """
+
+        def waitUntilDesiredNumberOfIframes(desiredNumberOfIframes=8, timeIntervalToCheckAgain: int = 1):
+            while True:
+                currentNumberOfIframes = len(self.driver.find_elements(By.TAG_NAME, "iframe"))
+                print(currentNumberOfIframes)
+                if currentNumberOfIframes == desiredNumberOfIframes:
+                    # return self.driver.find_elements(By.TAG_NAME, "iframe")[0]
+                    return self.driver.find_element(By.TAG_NAME, "iframe")
+                sleep(timeIntervalToCheckAgain)
+
         # Unable to fetch the form elements without focus on iframe in selenium (even in during execution of normal JavaScript in browser )
         # iframe in which the form of Unique Reference ID is located is "name='__privateStripeFrame61918'"
         # So, we have to switch to iframe to fill this form.
         # The name of iframe changes in every request. So, we will find the iframe by tag name and at index 0, the desired iframe is located.
-        self.driver.switch_to.frame(
-            scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.TAG_NAME, "iframe"), 60)
-        )
+        # On payment page as well as on writing unique reference page, iframes are present.
+        # Actually, unique reference page is loaded using AJAX on the same payment page.
+        # So, if we try to get the iframe then we will get from the payment page.
+        # On little research I have found that:
+        # # On payment page number of iframes are 7.
+        # # When card details is submitted then unique reference page is loaded using AJAX and a new iframe is inserted at index 0.
+        # # So, total number of iframes on the unique reference page is 8.
+        # # Let's implement this one.
+        scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.TAG_NAME, "iframe"))
+
+        desiredIframe = waitUntilDesiredNumberOfIframes()
+        self.driver.switch_to.frame(desiredIframe)
 
         # iframe elements are also available in parent page. So, we have to wait until desired element loaded.
         # ID for Corporate ID is "corporateId"
