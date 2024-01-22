@@ -145,3 +145,27 @@ class Stripe:
             self.driver, (By.CSS_SELECTOR, ".ReadOnlyFormField-title")
         ).text.strip()
         return emailOnPaymentPage == correctEmail
+
+    def writeUniqueReferenceID(self, corporateId: str, employeeId: str) -> None:
+        """
+        Description:
+            - This function sets the values of the corporate ID and employee ID input fields in the web form and then submits the form by clicking the submit button.
+
+        Parameters:
+            * corporateId (str):
+                - The corporate ID to be set in the form.
+            * employeeId (str):
+                - The employee ID to be set in the form.
+
+        Returns:
+            * None
+        """
+        # ID for Corporate ID is "corporateId"
+        # Waiting for element
+        scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.ID, "corporateId"), 50).send_keys(
+            corporateId
+        )
+        # ID for employee ID is "employeeId"
+        self.driver.find_element(By.ID, "employeeId").send_keys(employeeId)
+        # Classes for submit button are "btn primary__btn"
+        self.driver.find_element(By.CLASS_NAME, "btn.primary__btn").click()
