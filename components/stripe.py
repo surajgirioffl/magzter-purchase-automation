@@ -168,9 +168,13 @@ class Stripe:
             scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.TAG_NAME, "iframe"), 60)
         )
 
+        # iframe elements are also available in parent page. So, we have to wait until desired element loaded.
         # ID for Corporate ID is "corporateId"
         # Waiting for element
-        self.driver.find_element(By.ID, "corporateId").send_keys(corporateId)
+        scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.ID, "corporateId"), 60).send_keys(
+            corporateId
+        )
+
         # ID for employee ID is "employeeId"
         self.driver.find_element(By.ID, "employeeId").send_keys(employeeId)
         # Classes for submit button are "btn primary__btn"
