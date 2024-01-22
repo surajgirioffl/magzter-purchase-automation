@@ -163,10 +163,9 @@ class Stripe:
         # Unable to fetch the form elements without focus on iframe in selenium (even in during execution of normal JavaScript in browser )
         # iframe in which the form of Unique Reference ID is located is "name='__privateStripeFrame61918'"
         # So, we have to switch to iframe to fill this form.
+        # The name of iframe changes in every request. So, we will find the iframe by tag name and at index 0, the desired iframe is located.
         self.driver.switch_to.frame(
-            scrap_tools.waitUntilElementBecomeVisible(
-                self.driver, (By.CSS_SELECTOR, "iframe[name='__privateStripeFrame61918']"), 60
-            )
+            scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.TAG_NAME, "iframe"), 60)
         )
 
         # ID for Corporate ID is "corporateId"
@@ -176,6 +175,6 @@ class Stripe:
         self.driver.find_element(By.ID, "employeeId").send_keys(employeeId)
         # Classes for submit button are "btn primary__btn"
         self.driver.find_element(By.CLASS_NAME, "btn.primary__btn").click()
-        
+
         # Switch back to default
         self.driver.switch_to.default_content()
