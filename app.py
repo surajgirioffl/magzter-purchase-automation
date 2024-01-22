@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 21st Jan 2024
+    @last-modified: 22nd Jan 2024
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -318,12 +318,8 @@ def main() -> None:
             mg.writeOTP(otp)
             sleep(1)  # sleep for 1 second
 
-            # status: bool | None = mg.isOTPSuccessfullySubmitted(maxWaitTimeForURLChange=5) # Time consuming.
-            # status: bool | None = mg.isOTPSuccessfullySubmitted_2()
-            status: bool | None = mg.isOTPSuccessfullySubmitted_3()  # 3rd way to prevent selenium stuck
-            # status: bool | None = mg.isOTPSuccessfullySubmitted_4() # 4th way to prevent selenium stuck
-            print("Returned from isOTPSuccessfullySubmitted_3")
-            print("status:", status)
+            status: bool | None = mg.isOTPSuccessfullySubmitted(maxWaitTimeForURLChange=5)  # Time consuming.
+            print("OTP fetch status:", status)
 
             if status:
                 # OTP successfully submitted. So, break the loop.
