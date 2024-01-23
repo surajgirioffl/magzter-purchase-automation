@@ -3,7 +3,7 @@
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 22nd Jan 2024
     @completed-on: N/A
-    @last-modified: 22nd Jan 2024
+    @last-modified: 23rd Jan 2024
     @error-series: 2500
     @description:
         * Module to perform any operations related to Stripe for the project.
@@ -201,7 +201,7 @@ class Stripe:
 
         desiredIframe = waitUntilDesiredNumberOfIframes()
         # self.driver.switch_to.frame(desiredIframe)
-        
+
         # shadow = Shadow(self.driver)
 
         # *--------------------------------FILLING FORM-------------------------------------* #
@@ -220,3 +220,57 @@ class Stripe:
 
         # Switch back to default
         self.driver.switch_to.default_content()
+
+    def writeUniqueReferenceIDLikeHuman(
+        self,
+        corporateId: str,
+        employeeId: str,
+        maxWaitTimeForFormLoad: int = 60,
+        waitTimeWhenFormLoaded: int = 3,
+    ) -> bool:
+        """
+        Description:
+            - This function sets the values of the corporate ID and employee ID input fields in the web form and then fill the form by GUI interaction..
+            - Not working(Fix it in later version)
+
+        Parameters:
+            * corporateId (str):
+                - The corporate ID to be set in the form.
+            * employeeId (str):
+                - The employee ID to be set in the form.
+            * maxWaitTimeForFormLoad (int):
+                - The maximum number of seconds to wait for the form to be loaded on the screen.
+                - Default to 60 seconds.
+            * waitTimeWhenFormLoaded (int):
+                - The wait time in seconds to wait after form loaded.
+                - This is useful because when the form loaded then it will take some time to appear for filling.
+                    - And in GUI interaction, the form should be available on the screen and waiting for input.
+                - Default to 3 seconds.
+
+        Returns:
+            * bool:
+                - True if function try to fill the form else False.
+                - False is only possible if the number of iframes will not equal to desired number of iframes in the form page.
+        """
+
+        def waitUntilDesiredNumberOfIframes(
+            desiredNumberOfIframes=8, timeIntervalToCheckAgain: int = 1, maxWaitTime: int = 60
+        ):
+            totalWaitTime = 0
+            while True:
+                currentNumberOfIframes = len(self.driver.find_elements(By.TAG_NAME, "iframe"))
+                if currentNumberOfIframes == desiredNumberOfIframes:
+                    return True
+                sleep(timeIntervalToCheckAgain)
+                totalWaitTime += 1
+                if totalWaitTime >= maxWaitTime:
+                    return False
+
+        if waitUntilDesiredNumberOfIframes():
+            sleep(2)
+            press("tab")
+            write(corporateId)
+            press("tab")
+            write(employeeId)
+            return True
+        return False
