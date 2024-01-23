@@ -17,6 +17,7 @@ from pyautogui import write, press
 from utilities import scrap_tools
 from selenium.webdriver import Chrome, Edge, Firefox
 from selenium.webdriver.common.by import By
+from pyshadow.main import Shadow
 
 
 class Stripe:
@@ -150,6 +151,7 @@ class Stripe:
         """
         Description:
             - This function sets the values of the corporate ID and employee ID input fields in the web form and then submits the form by clicking the submit button.
+            - Not working(Fix it in later version)
 
         Parameters:
             * corporateId (str):
@@ -182,20 +184,37 @@ class Stripe:
         # # When card details is submitted then unique reference page is loaded using AJAX and a new iframe is inserted at index 0.
         # # So, total number of iframes on the unique reference page is 8.
         # # Let's implement this one.
+
+        # Above solution is good to check if unique reference page is loaded or not.
+        # But there is another issue too.
+        # The unique reference page is loaded in a <iframe> like following:
+        # <iframe>...
+        #     <iframe>... (id="challengeFrame" )
+        #           <shadow DOM> named as #document
+        # And in this shadow DOM, the form are embedded. It can not be accessible directly using javascript.
+        # If we reveal this DOM in dev tools, then it gets loaded and then javascript is applicable on it.
+        # Note: Shadow DOM allows hidden DOM trees to be attached to elements in the regular DOM tree — this shadow DOM tree starts with a shadow root, underneath which you can attach any element, in the same way as the normal DOM.
+        # # Document.querySelectorAll() doesn't find the elements in our shadow DOM: they are effectively hidden from JavaScript in the page
+        # Source: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
+
         scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.TAG_NAME, "iframe"))
 
         desiredIframe = waitUntilDesiredNumberOfIframes()
-        self.driver.switch_to.frame(desiredIframe)
+        # self.driver.switch_to.frame(desiredIframe)
+        
+        # shadow = Shadow(self.driver)
 
+        # *--------------------------------FILLING FORM-------------------------------------* #
         # iframe elements are also available in parent page. So, we have to wait until desired element loaded.
         # ID for Corporate ID is "corporateId"
         # Waiting for element
         scrap_tools.waitUntilElementBecomeVisible(self.driver, (By.ID, "corporateId"), 60).send_keys(
             corporateId
         )
+        print("Corporate ID found..")
 
         # ID for employee ID is "employeeId"
-        self.driver.find_element(By.ID, "employeeId").send_keys(employeeId)
+        self.find_element(By.ID, "employeeId").send_keys(employeeId)
         # Classes for submit button are "btn primary__btn"
         self.driver.find_element(By.CLASS_NAME, "btn.primary__btn").click()
 
