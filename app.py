@@ -17,7 +17,7 @@ r"""
 """
 __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 from time import sleep, time
 import logging
