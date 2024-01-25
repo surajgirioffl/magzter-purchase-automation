@@ -386,6 +386,8 @@ def main() -> None:
         print("done...")
 
         print("\n")
+        print(f"Time taken till this point for row {rowNumber} is {time()-iterationStartTime:.2f} seconds.")
+        print("\n")
         paymentStatus = confirmPaymentStatus()
         paymentStatus = "Success" if paymentStatus else "Failed"
 
