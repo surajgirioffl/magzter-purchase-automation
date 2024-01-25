@@ -19,7 +19,7 @@ __author__ = "Suraj Kumar Giri"
 __email__ = "surajgirioffl@gmail.com"
 __version__ = "1.0.0"
 
-from time import sleep
+from time import sleep, time
 import logging
 from sys import exit
 from os.path import exists
@@ -272,6 +272,7 @@ def main() -> None:
     index = 0
 
     while True:
+        iterationStartTime: float = time()
         # Options and services must be initialized for each browser session because when you quit a browser then these objects are also destroyed.
         # New browser session (Because clear cookies is not working for microsoft)
         # Initializing the chrome webdriver
@@ -405,6 +406,9 @@ def main() -> None:
         # TODO -> Inserting the current ip to the database.
         print("Inserting the current ip to the database...")
         spreadsheetDb.insertIp(currentIP)
+
+        iterationEndTime: float = time()
+        print(f"Total time for row {rowNumber} is {iterationEndTime-iterationStartTime:.2f} seconds.")
 
         # Updating the row number and index
         rowNumber += 1  # incrementing the row number
