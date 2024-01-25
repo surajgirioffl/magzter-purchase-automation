@@ -367,7 +367,7 @@ def main() -> None:
         uDriver.get(paymentPageLink)
         stp = stripe.Stripe(uDriver)
         sleep(3)
-        if not stp.isCorrectEmailOnPaymentPage():
+        if not stp.isCorrectEmailOnPaymentPage(email):
             print("Email on the page is not same as the email logged in.")
             print("Something went wrong.. Error Code: ")
             print("Please don't proceed. Close the application...")
