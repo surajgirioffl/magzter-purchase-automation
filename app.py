@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 25th Jan 2024
+    @last-modified: 26th Jan 2024
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -367,7 +367,7 @@ def main() -> None:
         uDriver.get(paymentPageLink)
         stp = stripe.Stripe(uDriver)
         sleep(3)
-        if not stp.isCorrectEmailOnPaymentPage(email):
+        if not stp.isCorrectEmailOnPaymentPage(email.lower()):
             print("Email on the page is not same as the email logged in.")
             print("Something went wrong.. Error Code: ")
             print("Please don't proceed. Close the application...")
