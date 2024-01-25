@@ -9,7 +9,7 @@ r"""
     @author: Suraj Kumar Giri (https://github.com/surajgirioffl)
     @init-date: 24th Nov 2023
     @completed-on: N/A
-    @last-modified: 22nd Jan 2024
+    @last-modified: 25th Jan 2024
     @error-series: 1100
     @description:
         - Main module of the application (Driver module).
@@ -32,7 +32,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 import undetected_chromedriver as uc
-from components import ip, google_sheets, microsoft, magzter
+from components import ip, google_sheets, microsoft, magzter, stripe
 from utilities import tools, scrap_tools
 from db_scripts import spreadsheet_db
 
@@ -354,14 +354,35 @@ def main() -> None:
                 mg.writeOTP(otpByUser)
                 break
 
-        # TODO -> Fetching and writing card information
+        paymentPageLink: str = driver.current_url
+        # TODO -> Fetching and writing card information (Stripe page works)
         print("Fetching and writing card information...")
-        carNumber: str = rowData[headersWithIndex["card_number"]]
+        cardNumber: str = rowData[headersWithIndex["card_number"]]
         cardExpiry: str = rowData[headersWithIndex["card_expiry"]]
         cardCvv: str = rowData[headersWithIndex["card_cvv"]]
         cardholderName: str = rowData[headersWithIndex["cardholder_name"]]
-        # sleep(3)
-        mg.writeCardInformation(carNumber, cardExpiry, cardCvv, cardholderName)
+
+        uDriver = NewUndetectableDriverInstance.getNewChromeInstance()
+        uDriver.get(paymentPageLink)
+        stp = stripe.Stripe(uDriver)
+        sleep(3)
+        if not stp.isCorrectEmailOnPaymentPage():
+            print("Email on the page is not same as the email logged in.")
+            print("Something went wrong.. Error Code: ")
+            print("Please don't proceed. Close the application...")
+            input("Press enter to continue (Not recommended): ")
+
+        stp.writeCardInformation(cardNumber, cardExpiry, cardCvv, cardholderName)
+        print("Card Information written..")
+
+        print("Writing reference IDs...")
+        corporateId: str = rowData[headersWithIndex["corporate"]]
+        employeeId: str = rowData[headersWithIndex["employee_id"]]
+        stp.writeUniqueReferenceIDLikeHuman(corporateId, employeeId)
+        print("If reference IDs are not written then copy and paste from here..")
+        print(f"Corporate ID: {corporateId}")
+        print(f"Employee ID: {employeeId}")
+        print("done...")
 
         print("\n")
         paymentStatus = confirmPaymentStatus()
@@ -390,10 +411,10 @@ def main() -> None:
         index += 1
 
         # Closing the browser
-        print("Closing the browser..")
+        print("Closing both browsers till then please change your IP.")
         # Ensure that chrome.quit() is called regardless of what happens.
-        if "chrome" in locals() and hasattr(driver, "quit"):
-            driver.quit()
+        driver.quit()
+        uDriver.quit()
 
 
 if __name__ == "__main__":
